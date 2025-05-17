@@ -5,7 +5,7 @@ import type { Album, AlbumPayload } from '../../features/albums/album.types';
 import { useForm } from 'react-hook-form';
 import { albumSchema, type AlbumFormData } from '../../validators/album.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {  useAppDispatch, useAppSelector } from '../../app/store';
+import { useAppDispatch, useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
 import { Pencil, Plus } from 'lucide-react';
@@ -20,8 +20,8 @@ interface Props {
 const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
 
   const dispatch = useAppDispatch()
-  const { closeDialog } = useDialog()
-  const {artists} = useAppSelector(state => state.artists)
+  const { closeDialog, openedDialogs } = useDialog()
+  const { artists } = useAppSelector(state => state.artists)
   const dialogId = React.useMemo(() => `${editingAlbum ? "edit-album-" + editingAlbum._id : "add-album"}`, [editingAlbum]);
 
   const { mutuated, creating, updating } = useAppSelector(state => state.albums)
@@ -29,6 +29,7 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm<AlbumFormData>({
     resolver: zodResolver(albumSchema),
@@ -64,12 +65,24 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
     dispatch(fetchArtists())
   }), [dispatch])
 
+  useEffect(() => {
+
+    reset({
+      title: editingAlbum?.title,
+      artist: editingAlbum?.artist,
+      genre: editingAlbum?.genre,
+      releaseDate: editingAlbum?.releaseDate,
+      songs: editingAlbum?.songs,
+      coverImage: editingAlbum?.coverImage
+    });
+  }, [editingAlbum, reset, openedDialogs]);
+
 
 
   return (
     <Dialog
       dialogId={dialogId}
-      icon={editingAlbum ? <Pencil size={18}/> : <Plus size={18} />}
+      icon={editingAlbum ? <Pencil size={18} /> : <Plus size={18} />}
       triggerText={<span>  Album</span>}    >
       <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
         <h2>{editingAlbum ? 'Edit Album' : 'Add New Album'}</h2>
@@ -114,7 +127,7 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
           placeholder="Release Date"
           id="releaseDate"
           type="date"
-          {...register('releaseDate')}  
+          {...register('releaseDate')}
           hasError={!!errors.releaseDate}
         />
         <ErrorMessage hasError={!!errors.releaseDate}>
