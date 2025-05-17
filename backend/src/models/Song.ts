@@ -5,7 +5,7 @@ import mongoose, { Document, Schema } from 'mongoose';
     artist: mongoose.Types.ObjectId ;
     album?: mongoose.Types.ObjectId  ;
     genre?: string;
-    audioUrl: string;
+    audioUrl?: string;
     releaseDate?: Date;
   }
   
@@ -14,7 +14,7 @@ import mongoose, { Document, Schema } from 'mongoose';
     artist: { type: mongoose.Schema.Types.ObjectId , ref: 'Artist' },
     album: { type: mongoose.Schema.Types.ObjectId, ref: 'Album' },
     genre: String,
-    audioUrl: { type: String, required: true },
+    audioUrl: { type: String , required: false},
     releaseDate: { type: Date, default: Date.now },
   });
   

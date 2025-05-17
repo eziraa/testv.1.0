@@ -11,7 +11,10 @@ export const SongSchemaZod = z.object({
     { message: "Invalid album ID" }
   ),
   genre: z.string().optional(),
-  audioUrl: z.string().url("Invalid audio URL"),
+  audioUrl: z.string().optional().refine(
+    val => val === undefined || z.string().url().safeParse(val).success,
+    { message: "Invalid audio URL" }
+  ),
   releaseDate: z.union([z.string().datetime(), z.date()]).optional()
 });
 export type SongInput = z.infer<typeof SongSchemaZod>;

@@ -7,7 +7,7 @@ class SongController {
 
   // METHOD: to get all songs
   async getAllSongs(_: Request, res: Response) {
-    const songs = await Song.find();
+    const songs = await Song.find().populate('artist').populate('album');
     res.json(songs);
   }
 
