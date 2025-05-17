@@ -3,31 +3,32 @@ import { songAPI } from './song.api';
 import {
   fetchSongsSuccess,
   fetchSongsFailure,
+  createSongFailure,
 } from './song.slice';
 import {  type SongPayload } from './song.types';
 
 
-const SongActionTypes = {
-  FETCH_SONGS: "songs/fetchSongs",
-  FETCH_SONGS_SUCCESS: "songs/fetchSongsSuccess",
-  FETCH_SONGS_FAILURE: "songs/fetchSongsFailure",
+export enum SongActionTypes {
+  FETCH_SONGS = "songs/fetchSongs",
+  FETCH_SONGS_SUCCESS = "songs/fetchSongsSuccess",
+  FETCH_SONGS_FAILURE = "songs/fetchSongsFailure",
 
+  CREATE_SONG = "songs/createSong",
+  CREATE_SONGS_SUCCESS = "songs/createSongSuccess",
+  CREATE_SONGS_FAILURE = "songs/createSongFailure",
+  
+  UPDATE_SONG = "songs/updateSong",
+  UPDATE_SONGS_SUCCESS = "songs/updateSongSuccess",
+  UPDATE_SONGS_FAILURE = "songs/updateSongFailure",
 
-  FETCH_STATS: 'stats/fetchStats',
-  FETCH_STATS_SUCCESS: 'stats/fetchStatsSuccess',
-  FETCH_STATS_FAILURE: 'stats/fetchStatsFailure',
+  DELETE_SONG = "songs/deleteSong",
+  DELETE_SONGS_SUCCESS = "songs/deleteSongSuccess",
+  DELETE_SONGS_FAILURE = "songs/deleteSongFailure",
 
-  CREATE_SONG: "songs/createSong",
-  UPDATE_SONG: "songs/updateSong",
-  DELETE_SONG: "songs/deleteSong",
-
-  FETCH_SONG: "songs/fetchSong",
-  FETCH_SONG_SUCCESS: "songs/fetchSongSuccess",
-  FETCH_SONG_FAILURE: "songs/fetchSongFailure",
-} as const;
-
-export  type SongActionTypes = (typeof SongActionTypes)[keyof typeof SongActionTypes];
-
+  FETCH_SONG = "songs/fetchSong",
+  FETCH_SONG_SUCCESS = "songs/fetchSongSuccess",
+  FETCH_SONG_FAILURE = "songs/fetchSongFailure",
+} 
 
 function* fetchSongsWorker(): Generator<any, void, { data: any }> {
   try {
@@ -38,34 +39,47 @@ function* fetchSongsWorker(): Generator<any, void, { data: any }> {
   }
 }
 
-
-
 function* createSongWorker(action: { type: string; payload: SongPayload }) {
   try {
     yield call(songAPI.createSong, action.payload);
-    yield put({ type: SongActionTypes.FETCH_SONGS });
+    yield put({ type: SongActionTypes.CREATE_SONGS_SUCCESS });
+    yield put({type: SongActionTypes.FETCH_SONGS })
   } catch (error) {
-    console.error('Create song error', error);
+    if (error instanceof Error && error.message) {
+      yield put(createSongFailure(error.message));
+    } else {
+      yield put(createSongFailure('An unknown error occurred'));
+    }
   }
 }
 
 function* updateSongWorker(action: { type: string; payload: { id: string; data: Partial<SongPayload> } }) {
   try {
     yield call(songAPI.updateSong, action.payload.id, action.payload.data);
+    yield put({ type: SongActionTypes.UPDATE_SONGS_SUCCESS });
     yield put({ type: SongActionTypes.FETCH_SONGS });
   } catch (error) {
-    console.error('Update song error', error);
-  }
+    if (error instanceof Error && error.message) {
+      yield put(createSongFailure(error.message));
+    } else {
+      yield put(createSongFailure('An unknown error occurred'));
+    }  }
 }
 
 function* deleteSongWorker(action: { type: string; payload: string }) {
   try {
     yield call(songAPI.deleteSong, action.payload);
+    yield put({ type: SongActionTypes.DELETE_SONGS_SUCCESS });
     yield put({ type: SongActionTypes.FETCH_SONGS });
   } catch (error) {
-    console.error('Delete song error', error);
-  }
+    if (error instanceof Error && error.message) {
+      yield put(createSongFailure(error.message));
+    } else {
+      yield put(createSongFailure('An unknown error occurred'));
+    } 
+   }
 }
+
 function* fetchSongWorker(action: { type: string; payload: string }): Generator<any, void, { data: any }> {
   try {
     const response = yield call(songAPI.getSongById, action.payload);
