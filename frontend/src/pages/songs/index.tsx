@@ -1,36 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import SongList from './SongList';
 import type {  SongPayload } from '../../features/songs/song.types';
 import AddSong from './AddSong';
+import { createSong, deleteSong, updateSong } from '../../features/songs/song.slice';
 
 
 const SongsPage: React.FC = () => {
   const dispatch = useDispatch();
-  const [editingSong, setEditingSong] = useState<SongPayload | null>(null);
 
-
-
-  const handleSubmit = (_: SongPayload, id?: string) => {
+  const handleSubmit = (data: SongPayload, id?: string) => {
     if (id) {
-    //   dispatch(updateSongSaga({ id, data: song }));
+      dispatch(updateSong({ id, data: data }));
     } else {
-    //   dispatch((song));
+      dispatch(createSong(data));
     }
   };
 
-  const handleEdit = (song: SongPayload, id?: string) => {
-    setEditingSong(song);
-  };
-
-  const handleDelete = (_: string) => {
-    // dispatch(deleteSongSaga(id));
-  };
-
-  const handleOpen = () => {
-    setEditingSong(null);
+  const handleDelete = (songId: string) => {
+    dispatch(deleteSong(songId))
   };
 
 
@@ -43,7 +33,7 @@ const SongsPage: React.FC = () => {
           />
       </Header>
 
-      <SongList  onEdit={handleEdit} onDelete={handleDelete} />
+      <SongList  onEdit={handleSubmit} onDelete={handleDelete} />
 
          
     </PageWrapper>
@@ -55,32 +45,49 @@ export default SongsPage;
 // Styled Components
 
 const PageWrapper = styled.div`
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1024px;
   margin: auto;
   display: flex;
   flex-direction: column;
   justify-items: start;
+
+  @media (max-width: 768px) {
+    padding: 0;
+    max-width: 100%;
+    margin: 0;
+    flex-direction: column;
+    justify-items: center;
+    max-width: 100vw;
+  }
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-`;
+  padding: 1rem 0;
 
-const AddButton = styled.button`
-  background-color: #0f62fe;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  h1 {
+    font-size: 2rem;
+    color: ${({ theme }) => theme.textSecondary};
+    margin: 0;
+    font-weight: 600;
+    text-align: left;
+    flex: 1;
 
-  &:hover {
-    background-color: #0353e9;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
   }
 `;
