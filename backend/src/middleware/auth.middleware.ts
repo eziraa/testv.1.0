@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "yoursecretkey";
+const JWT_SECRET = process.env.JWT_SECRET || "defaultSecret";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -24,8 +24,10 @@ export const AuthenticatedOnly = (
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
-    req.userId = decoded.id;
+    const decoded = jwt.verify(token, JWT_SECRET) as { _id: string };
+    req.userId = decoded._id;
+    console.log("User ID", req.userId)
+    console.log("Decoded ID", decoded)
     next();
   } catch (error) {
      res.status(401).json({ message: "Unauthorized: Invalid token" });

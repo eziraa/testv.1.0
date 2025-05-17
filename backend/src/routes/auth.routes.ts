@@ -8,7 +8,7 @@ const router = Router();
 // Authentication routes
 router.post("/login", authController.login);
 router.post("/signup", authController.signUp);
-router.post("/update-profile",AuthenticatedOnly, authController.updateUserProfile);
+router.patch("/update-profile",AuthenticatedOnly, authController.updateUserProfile);
 router.get("/me",AuthenticatedOnly, authController.getMe);
 
 
