@@ -57,4 +57,28 @@ const DeleteButton = styled(Button)`
   }
 `;
 
-export { Button, DeleteButton, ButtonRow };
+
+const CloseButton = styled.button`
+  color: ${({ theme }) => theme.dialogCloseColor || '#007bffcc'};
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.dialogCloseHoverColor || '#007bff'};
+    background-color: ${({ theme }) => theme.background};
+  }
+
+  font-size: 1.2rem;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  display: none;
+  @media (max-width: 768px) {
+    top: 0.7rem;
+    right: 1rem;
+    position: absolute;
+    display: block !important;
+  }
+`;
+
+export { Button, DeleteButton, CloseButton, ButtonRow };

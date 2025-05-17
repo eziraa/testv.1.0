@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Menu, X, Music, User, Music2 } from 'lucide-react';
-import { CloseButton } from './Dialog';
+import { Menu, X, Music, User, Music2, HeartIcon } from 'lucide-react';
+import { CloseButton } from './Button';
 
-const Navbar: React.FC = () => {
+interface  SideBarItem{
+  name: string;
+  icon: React.ReactNode;
+  url: string;
+}
+
+const sideBarItems: SideBarItem[] = [
+  { name: 'Artists', icon: <User size={18} />, url: '/artists' },
+  { name: 'Songs', icon: <Music2 size={18} />, url: '/songs' },
+  { name: 'Albums', icon: <Music size={18} />, url: '/albums' },
+  { name: 'Playlists', icon: <Music2 size={18} />, url: '/playlists' },
+  {name: 'Favorites', icon: <HeartIcon size={18} />, url: '/favorites'},
+  { name: 'Settings', icon: <User size={18} />, url: '/settings' },
+  { name: 'Logout', icon: <User size={18} />, url: '/logout' },
+];
+const SideBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = useLocation().pathname;
 
@@ -29,12 +44,17 @@ const Navbar: React.FC = () => {
             <X size={24} />
           </CloseButton>
           <NavLinks>
-            <StyledLink to="/artists" onClick={closeMenu} isActive={pathname === '/artists'}>
-              <User size={18} /> Artists
-            </StyledLink>
-            <StyledLink to="/songs" onClick={closeMenu} isActive={pathname === '/songs'}>
-              <Music2 size={18} /> Songs
-            </StyledLink>
+            {sideBarItems.map(item => (
+              <StyledLink
+                key={item.name}
+                to={item.url}
+                isActive={pathname === item.url}
+                onClick={closeMenu}
+              >
+                {item.icon}
+                {item.name}
+              </StyledLink>
+            ))}
           </NavLinks>
         </Sidebar>
       </SidebarContainer>
@@ -44,7 +64,7 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default SideBar;
 
 
 const SidebarContainer = styled.div<{ isOpen: boolean }>`
@@ -53,7 +73,7 @@ const SidebarContainer = styled.div<{ isOpen: boolean }>`
   left: 0;
   height: 100vh;
   width: 240px;
-  z-index: 1200;
+  z-index: 1000;
   transform: ${({ isOpen }) => (isOpen ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 0.3s ease-in-out;
   background-color: ${({ theme }) => theme.navBackground || '#ffffff'};
@@ -94,6 +114,7 @@ const StyledLink = styled(Link) <StyledLinkProps>`
   font-weight: 600;
   font-size: 1rem;
   border-radius: 0.5rem;
+  border-bottom: 1px solid #223bf8;
   border-left: 4px solid
     ${({ isActive, theme }) =>
     isActive ? theme.navLinkActiveBg || '#4f46e5' : 'transparent'};

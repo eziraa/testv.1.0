@@ -138,7 +138,6 @@ const CloseButton = styled.button`
   right: 1rem;
   position: absolute;
   z-index: 1001;
-  display: none;
   background: transparent;
   border: none;
   @media (max-width: 768px) {
