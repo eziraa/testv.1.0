@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ErrorMessage, FormContainer, Input, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
 import type { Artist, ArtistPayload } from '../../features/artists/artist.types';
@@ -16,12 +16,12 @@ interface Props {
 }
 
 const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
-  const {closeDialog} = useDialog()
-  const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-"+editingArtist._id : "add-artist" }`, [editingArtist]);
 
-  const [creating, setCreating] = useState(false)
+  const { closeDialog } = useDialog()
+  const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-" + editingArtist._id : "add-artist"}`, [editingArtist]);
 
-  const { mutuated, error } = useAppSelector(state => state.artists)
+
+  const { mutuated, creating, updating } = useAppSelector(state => state.artists)
 
   const {
     register,
@@ -40,27 +40,23 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
 
 
   const onDataSubmit = (data: ArtistFormData) => {
-    setCreating(true)
     try {
       onSubmit(data, editingArtist?._id);
     } catch (error) {
-      console.log("Failed to add artist")
-      toast.error("Failed to add artist")
+      if (error instanceof Error && error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unknown error occurred');
+      }
     }
   };
 
   useEffect(() => {
-    if(!creating) return;
     if (mutuated) {
       closeDialog(dialogId)
-      toast.success("Arist added successfully!")
     }
-    if (error) {
-      toast.error("Failed to add artist")
-    }
-    setCreating(false)
-
   }, [mutuated])
+
 
   return (
     <Dialog
@@ -97,7 +93,7 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
         <ErrorMessage hasError={!!errors.profilePicture}>
           {errors.profilePicture?.message}
         </ErrorMessage>
-        <SubmitButton disabled={creating} type="submit">
+        <SubmitButton disabled={creating || updating} type="submit">
           {editingArtist ? 'Update Artist' : 'Add Artist'}
         </SubmitButton>
       </FormContainer>

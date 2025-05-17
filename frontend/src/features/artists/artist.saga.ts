@@ -56,6 +56,7 @@ function* createArtistWorker(action: { type: string; payload: ArtistPayload }) {
 function* updateArtistWorker(action: { type: string; payload: { id: string; data: Partial<ArtistPayload> } }) {
   try {
     yield call(artistAPI.updateArtist, action.payload.id, action.payload.data);
+    yield put({ type: ArtistActionTypes.UPDATE_ARTISTS_SUCCESS });
     yield put({ type: ArtistActionTypes.FETCH_ARTISTS });
   } catch (error) {
     if (error instanceof Error && error.message) {
