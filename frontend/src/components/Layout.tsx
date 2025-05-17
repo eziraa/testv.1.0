@@ -49,4 +49,13 @@ const ContentArea = styled.main`
   background: ${({ theme }) => theme.background};
 `;
 
-export { MainLayout, Header, AppTitle, Body, Sidebar, ContentArea };
+
+const Dismissable = styled.span`
+  display: inline;
+  @media (max-width: 768px) {
+    display: none;
+  }
+`
+
+export { MainLayout, Header, AppTitle, Body, Sidebar, ContentArea , Dismissable};
+

@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { fetchArtists } from '../../features/artists/artist.slice';
 import { Plus } from 'lucide-react';
 import styled from 'styled-components';
+import { Dismissable } from '../../components/Layout';
 
 interface Props {
   onSubmit: (song: SongPayload, id?: string) => void;
@@ -163,11 +164,3 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong }) => {
 
 export default AddSong;
 
-
-// Styled Components
-const Dismissable = styled.span`
-  display: inline;
-  @media (max-width: 768px) {
-    display: none;
-  }
-`

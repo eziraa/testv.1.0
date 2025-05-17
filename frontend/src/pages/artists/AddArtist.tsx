@@ -8,6 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {  useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
+import { Plus } from 'lucide-react';
+import { Dismissable } from '../../components/Layout';
 
 
 interface Props {
@@ -58,8 +60,8 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
   return (
     <Dialog
       dialogId={dialogId}
-      triggerText={editingArtist ? 'Edit Artist' : 'Add New Artist'}
-    >
+      icon={<Plus size={20} />}
+      triggerText={<span> <Dismissable>{editingArtist ? "Edit" : "Add"}</Dismissable> Song</span>}    >
       <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
         <h2>{editingArtist ? 'Edit Artist' : 'Add New Artist'}</h2>
 
