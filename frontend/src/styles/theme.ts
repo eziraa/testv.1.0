@@ -10,7 +10,6 @@ const defaultTheme = {
   focusOutline: "#0070f3",
   
   // Dialog theme
-  overlayBackground: "rgba(0, 0, 0, 0.5)",
   dialogBackground: "#fff",
   dialogBoxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
   dialogBoxShadowHover: "0 14px 30px rgba(0, 0, 0, 0.2)",
@@ -22,7 +21,10 @@ const defaultTheme = {
   navLinkHoverBg: "#eaeaea",
   navLinkActiveBg: "#0070f3",
   navlinkActiveColor: "#fff",
+
   // Form colors
+  errorColor: "#e2301d",
+  textDanger: "#d32f2f"
 };
 export const lightTheme = {
   ...defaultTheme,
@@ -31,6 +33,9 @@ export const lightTheme = {
   cardBackground: "#ffffff",
   cardShadow: "0 8px 20px rgba(0, 0, 0, 0.07)",
   borderColor: "#eaeaea",
+
+  overlayBackground: "rgba(255, 255, 255, 0.5)",
+
 
   // Text colors
   textPrimary: "#333333",
@@ -45,7 +50,6 @@ export const lightTheme = {
   inputBorder: "#ccc",
   inputFocusBorder: "#007bff",
 
-  errorColor: "red",
 
   primaryButtonBg: "#007bffdd",
   primaryButtonColor: "#fff",
@@ -63,6 +67,11 @@ export const lightTheme = {
   // fonts
   font: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   border: " #eaeaea",
+
+  // Cancel btn theme
+  cancelButtonBackground: '#f3f3f3',
+  cancelButtonText: '#333333',
+  cancelButtonHover: '#e0e0e0',
 };
 
 export const darkTheme = {
@@ -86,13 +95,12 @@ export const darkTheme = {
   inputBorder: "#555",
   inputFocusBorder: "#3399ff",
 
-  errorColor: "#ff6b6b",
-
   primaryButtonBg: "#3399ffdd",
   primaryButtonColor: "#fff",
   primaryButtonHoverBg: "#3399ff",
 
   labelColor: "#eee",
+  overlayBackground: "rgba(255, 255, 255, 0.5)",
 
   // Navbar colors
   navBackground: "#1e1e1e",
@@ -101,9 +109,15 @@ export const darkTheme = {
   // Spinner colors
   spinnerColor: "#3399ff",
   spinnerBackground: "rgba(255, 255, 255, 0.1)",
+  
   // fonts
   font: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   border: " #333333",
+
+  // Cancel btn theme
+  cancelButtonBackground: '#333333',
+  cancelButtonText: '#f1f1f1',
+  cancelButtonHover: '#444444',
 };
 
 export type ThemeType = typeof lightTheme;
