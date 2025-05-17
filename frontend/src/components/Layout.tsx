@@ -5,6 +5,7 @@ const MainLayout = styled.div`
   flex-direction: column;
   min-height: 100vh;
   max-height: 100vh;
+  overflow: hidden;
 `;
 
 const Header = styled.header`
@@ -47,6 +48,14 @@ const ContentArea = styled.main`
   flex: 1;
   padding: 2rem;
   background: ${({ theme }) => theme.background};
+  overflow-y: auto;
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+  &.scroll-box {
+    overflow-y: auto;
+    max-height: calc(100vh - 64px); /* Adjust this value based on your header height */
+  }
 `;
 
 

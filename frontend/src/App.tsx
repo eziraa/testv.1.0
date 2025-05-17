@@ -43,14 +43,14 @@ const App: React.FC = () => {
       />
       <DialogProvider>
 
-        <MainLayout className='scroll-box'>
+        <MainLayout className=''>
           <Header>
             <AppTitle>🎵 Resonix</AppTitle>
             <ThemeToggle isDark={isDark} toggle={toggleTheme} />
           </Header>
           <Body>
             <SideBar />
-            <ContentArea>
+            <ContentArea className='scroll-box'>
               <Routes>
                 <Route path="/" element={<Navigate to="/songs" />} />
                 <Route path="/songs" element={<SongPage />} />
