@@ -70,3 +70,29 @@ button:focus-visible {
 input .error {
   border: red solid 1px !important;
 }
+
+.scroll-box {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #88888886 #f1f1f189;
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-box::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+.scroll-box::-webkit-scrollbar-track {
+  background: #f1f1f195;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+  background-color: #8888888a;
+  border-radius: 5px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb:hover {
+  background: #5555559c;
+}

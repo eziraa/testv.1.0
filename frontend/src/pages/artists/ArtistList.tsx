@@ -8,7 +8,6 @@ import { fetchArtists } from '../../features/artists/artist.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddArtist from './AddArtist';
 import DeleteDialog from '../../components/DeleteDialog';
-import { toast } from 'react-toastify';
 
 interface Props {
   onEdit: (artist: ArtistPayload, id?: string) => void;
@@ -18,7 +17,7 @@ interface Props {
 const ArtistList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   const dispatch = useAppDispatch();
-  const { artists, fetching, mutuated, error } = useAppSelector((state) => state.artists);
+  const { artists, fetching, deleting, mutuated, error } = useAppSelector((state) => state.artists);
 
   useEffect(() => {
     dispatch(fetchArtists())
@@ -67,11 +66,11 @@ const ArtistList: React.FC<Props> = ({ onEdit, onDelete }) => {
                   itemName={"Artist"}
                   deleteStatus={{
                     deleted: mutuated,
-                    error: error
+                    error: error,
+                    deleting: deleting
                   }}
                   onDelete={() => {
                     onDelete(artist._id);
-                    toast.success("Artist successfully deleted!")
                   }}
                 />
               </ButtonRow>

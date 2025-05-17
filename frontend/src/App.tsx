@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import  { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
+
+import SideBar from './components/SidBar';
 import ThemeToggle from './components/ToggleTheme';
 import GlobalStyle from './styles/globalStyls';
 import { darkTheme, lightTheme } from './styles/theme';
 import { AppTitle, Body, ContentArea, Header, MainLayout } from './components/Layout';
+
+import SongPage from './pages/songs';
+import NotFound from './pages/not-found';
+import ArtistsPage from './pages/artists';
+import { DialogProvider } from './contexts/dialog.context';
+import { ToastContainer } from 'react-toastify';
 
 const App: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -21,18 +29,38 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <MainLayout>
-        <Header>
-          <AppTitle>🎵 My Music App</AppTitle>
-          <ThemeToggle isDark={isDark} toggle={toggleTheme} />
-        </Header>
-        <Body>
-          <ContentArea>
-            <Routes>
-            </Routes>
-          </ContentArea>
-        </Body>
-      </MainLayout>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        theme={isDark ? 'dark' : 'light'}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <DialogProvider>
+
+        <MainLayout className='scroll-box'>
+          <Header>
+            <AppTitle>🎵 Resonix</AppTitle>
+            <ThemeToggle isDark={isDark} toggle={toggleTheme} />
+          </Header>
+          <Body>
+            <SideBar />
+            <ContentArea>
+              <Routes>
+                <Route path="/" element={<Navigate to="/songs" />} />
+                <Route path="/songs" element={<SongPage />} />
+                <Route path="/artists" element={<ArtistsPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ContentArea>
+          </Body>
+        </MainLayout>
+      </DialogProvider>
     </ThemeProvider>
   );
 };

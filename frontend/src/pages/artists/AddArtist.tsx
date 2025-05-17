@@ -20,7 +20,6 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
   const { closeDialog } = useDialog()
   const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-" + editingArtist._id : "add-artist"}`, [editingArtist]);
 
-
   const { mutuated, creating, updating } = useAppSelector(state => state.artists)
 
   const {
@@ -35,9 +34,6 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
       profilePicture: editingArtist?.profilePicture ?? '',
     }
   });
-
-
-
 
   const onDataSubmit = (data: ArtistFormData) => {
     try {
