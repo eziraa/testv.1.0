@@ -1,4 +1,3 @@
-// src/validators/songValidator.ts
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
