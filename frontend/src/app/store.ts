@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { songReducer } from '../features/songs/song.slice';
 import { artistReducer } from '../features/artists/artist.slice';
+import { albumReducer } from '../features/albums/album.slice';
 import rootSaga from './root.saga';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
 
@@ -10,7 +11,8 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     artists: artistReducer,
-    songs: songReducer
+    songs: songReducer,
+    albums: albumReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
