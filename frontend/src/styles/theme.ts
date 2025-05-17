@@ -72,6 +72,9 @@ export const lightTheme = {
   cancelButtonBackground: '#f3f3f3',
   cancelButtonText: '#333333',
   cancelButtonHover: '#e0e0e0',
+
+  cardBg: '#ffffff',
+  textMuted: '#6b7280',
 };
 
 export const darkTheme = {
@@ -118,6 +121,10 @@ export const darkTheme = {
   cancelButtonBackground: '#333333',
   cancelButtonText: '#f1f1f1',
   cancelButtonHover: '#444444',
+
+  textMuted: '#9ca3af',
+  cardBg: '#1f2937',
 };
 
 export type ThemeType = typeof lightTheme;
+
