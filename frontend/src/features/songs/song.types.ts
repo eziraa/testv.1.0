@@ -3,7 +3,7 @@ interface SongPayload {
   artist: string;
   album?: string;
   genre?: string;
-  audioUrl: string;
+  audioUrl?: string;
   releaseDate?: Date;
 }
 interface Song extends SongPayload {
