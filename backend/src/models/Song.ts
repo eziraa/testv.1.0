@@ -16,7 +16,7 @@ import mongoose, { Document, Schema } from 'mongoose';
     genre: String,
     audioUrl: { type: String , required: false},
     releaseDate: { type: Date, default: Date.now },
-  });
+  },{ timestamps: true });
   
   export default mongoose.model<ISong>('Song', SongSchema);
   

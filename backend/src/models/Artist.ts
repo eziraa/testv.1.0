@@ -10,6 +10,6 @@
     name: { type: String, required: true },
     bio: { type: String },
     profilePicture: { type: String },
-  });
+  }, { timestamps: true });
 
   export default mongoose.model<IArtist>('Artist', ArtistSchema);

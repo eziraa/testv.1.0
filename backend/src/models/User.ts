@@ -14,7 +14,7 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
-});
+}, { timestamps: true });
 
 
 UserSchema.methods.generateAuthToken = function (): {accessToken:string, refreshToken: string} {

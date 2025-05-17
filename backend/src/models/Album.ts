@@ -16,6 +16,6 @@ const AlbumSchema = new Schema<IAlbum>({
   coverImage: String,
   songs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
   genre: String,
-});
+}, { timestamps: true});
 
 export default mongoose.model<IAlbum>("Album", AlbumSchema);
