@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
-import SideBar from './components/SidBar';
+import SideBar from './components/SideBar';
 import ThemeToggle from './components/ToggleTheme';
 import GlobalStyle from './styles/globalStyls';
 import { darkTheme, lightTheme } from './styles/theme';
