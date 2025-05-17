@@ -5,6 +5,8 @@ export interface IAlbum extends Document {
   artist: mongoose.Types.ObjectId;
   releaseDate?: Date;
   coverImage?: string;
+  songs?: mongoose.Types.ObjectId[];
+  genre?: string;
 }
 
 const AlbumSchema = new Schema<IAlbum>({
@@ -12,6 +14,8 @@ const AlbumSchema = new Schema<IAlbum>({
   artist: { type: mongoose.Schema.Types.ObjectId, ref: "Artist" },
   releaseDate: Date,
   coverImage: String,
+  songs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
+  genre: String,
 });
 
 export default mongoose.model<IAlbum>("Album", AlbumSchema);
