@@ -28,6 +28,7 @@ const SideBar: React.FC = () => {
 
   return (
     <>
+      {isOpen && <Overlay onClick={closeMenu} />}
       <MobileHeader>
         <MenuToggle onClick={toggleMenu} aria-label="Toggle navigation">
           <Menu size={24} />
@@ -59,7 +60,6 @@ const SideBar: React.FC = () => {
         </Sidebar>
       </SidebarContainer>
 
-      {isOpen && <Overlay onClick={closeMenu} />}
     </>
   );
 };
