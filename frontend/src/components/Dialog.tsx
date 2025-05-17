@@ -1,39 +1,65 @@
-// src/components/Dialog.tsx
-import React, { useState, type ReactNode, useEffect } from 'react';
+import React, { type ReactNode, use, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useDialog } from '../contexts/dialog.context';
+import { Button, DeleteButton } from './Button';
 
 interface DialogProps {
-  trigger: ReactNode;
+  triggerText: string;
   children: ReactNode;
-  onOpenChange?: (open: boolean) => void;
+  dialogId: string;
+  isDanger?: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ trigger, children, onOpenChange }) => {
-  const [open, setOpen] = useState(false);
+const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, isDanger = false, children }) => {
+
+  const { openDialog, openedDialogs, closeDialog } = useDialog()
+  const [isOpen, setIsOpen] = useState(false);
+
 
   useEffect(() => {
-    onOpenChange?.(open);
-    if (open) {
-      document.body.style.overflow = 'hidden'; // disable scroll
-    } else {
-      document.body.style.overflow = ''; // restore scroll
-    }
-    return () => {
-      document.body.style.overflow = ''; // cleanup
-    };
-  }, [open, onOpenChange]);
+    setIsOpen(openedDialogs.includes(dialogId));
+  }, [openedDialogs]);
 
-  const close = () => setOpen(false);
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"
+    }
+    else {
+      document.body.style.overflow = ""
+    }
+
+    return (() => {
+      document.body.style.overflow = ""
+
+    })
+
+  }, [isOpen])
 
   return (
     <>
-      <TriggerWrapper onClick={() => setOpen(true)}>{trigger}</TriggerWrapper>
-      {open && (
+      <TriggerWrapper>
+        {
+          isDanger
+            ?
+            (
+              <DeleteButton onClick={() => openDialog(dialogId)}>{triggerText}</DeleteButton>
+            )
+            :
+            (
+              <Button onClick={() => { openDialog(dialogId); }}>{triggerText}</Button>
+            )
+        }
+      </TriggerWrapper>
+      {isOpen && (
         <>
-          <Overlay onClick={close} >
+          <Overlay
+            onClick={() => {
+              closeDialog(dialogId);
+            }
+            } >
             <Content onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="dialog-title">
               {children}
-              <CloseButton onClick={close} aria-label="Close modal">&times;</CloseButton>
+              <CloseButton onClick={() => closeDialog(dialogId)} aria-label="Close modal">&times;</CloseButton>
             </Content>
           </Overlay>
         </>
@@ -59,8 +85,8 @@ const slideIn = keyframes`
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: ${({ theme }) => theme.overlayBackground || 'rgba(0, 0, 0, 0.5)'};
   animation: ${fadeIn} 0.25s ease forwards;
+  background-color: ${() => "rgba(0, 0, 0, 0.2)"};
   z-index: 1000;
   height: 100vh;
   width: 100vw;
@@ -70,8 +96,8 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
 `;
 
 const Content = styled.div`
@@ -80,18 +106,18 @@ const Content = styled.div`
   width: 90vw;
   max-width: 550px;
   position: relative;
-  box-shadow: ${({ theme }) => theme.dialogBoxShadow || '0 10px 30px rgba(0, 0, 0, 0.2)'};
+  box-shadow: ${({ theme }) => theme.dialogBoxShadow || '0 10px 30px rgba(0, 0, 0, 0.1)'};
   animation: ${slideIn} 0.25s ease forwards;
   box-sizing: border-box;
   position: relative;
   transition: box-shadow 0.3s ease;
 
   &:hover {
-    box-shadow: ${({ theme }) => theme.dialogBoxShadowHover || '0 14px 30px rgba(0, 0, 0, 0.2)'};
+    box-shadow: ${({ theme }) => theme.dialogBoxShadowHover || '0 14px 30px rgba(0, 0, 0, 0.12)'};
   }
 `;
 
-const TriggerWrapper = styled.span`
+const TriggerWrapper = styled.div`
   display: inline-block;
   cursor: pointer;
 `;
