@@ -27,16 +27,16 @@ const Navbar: React.FC = () => {
             <X size={24} />
           </CloseButton>
           <NavLinks>
+            <StyledLink to="/artists" 
+            onClick={closeMenu}
+            isActive={pathname === '/artists'}
+            >
+              Artists
+            </StyledLink>
             <StyledLink 
             to="/songs" onClick={closeMenu}
             isActive={pathname === '/songs'}>
               Songs
-            </StyledLink>
-            <StyledLink to="/stats" 
-            onClick={closeMenu}
-            isActive={pathname === '/stats'}
-            >
-              Stats
             </StyledLink>
           </NavLinks>
         </Sidebar>
