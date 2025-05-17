@@ -3,13 +3,14 @@ import Dialog from './Dialog';
 import { Button, DeleteButton } from './Button';
 import styled from 'styled-components';
 import { useDialog } from '../contexts/dialog.context';
+import { Trash } from 'lucide-react';
 
 interface DeleteDialogProps {
   dialogId: string;
   triggerText: string;
   itemName: string;
   onDelete: () => void;
-  deleteStatus?: { deleted: boolean, error: string | null };
+  deleteStatus?: { deleted: boolean, deleting: boolean, error: string | null };
 }
 
 const DeleteDialog: React.FC<DeleteDialogProps> = ({
@@ -20,8 +21,8 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
   deleteStatus
 }) => {
 
-  const [deleting, setDeleting] = React.useState(false);
   const { closeDialog } = useDialog()
+  const { deleting } = deleteStatus || {};
 
   useEffect(() => {
     if (!deleting) return;
@@ -30,11 +31,10 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
     }
     if (deleteStatus?.error) {
     }
-    setDeleting(false);
   }, [deleteStatus]);
 
   return (
-    <Dialog dialogId={dialogId} isDanger triggerText={triggerText}>
+    <Dialog dialogId={dialogId} icon={<Trash size={20}/>} isDanger triggerText={triggerText}>
       <Container>
         <Header>Delete {itemName}?</Header>
         <Message>
@@ -44,10 +44,14 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
         <ButtonRow>
           <DeleteButton 
           disabled={deleting} 
-          onClick={() => {
-            setDeleting(true);
-            onDelete();
-          }}>
+          onClick={onDelete}
+          style={{
+            padding: '0.6rem 1rem',
+            fontSize: '0.875rem',
+            borderRadius: '8px',
+            cursor: deleting ? 'not-allowed' : 'pointer'
+          }}
+          >
             {deleting ? 'Deleting...' : 'Delete'}
           </DeleteButton>
           <CancelButton disabled={deleting} onClick={() => closeDialog(dialogId)}>
@@ -67,7 +71,7 @@ const Container = styled.div`
   padding: 2rem;
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.dialogBoxShadow || '0 10px 30px rgba(0, 0, 0, 0.1)'};
-  max-width: 500px;
+  max-width: 350px;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border}
 `;
@@ -94,8 +98,14 @@ const ButtonRow = styled.div`
 const CancelButton = styled(Button)`
   background-color: ${({ theme }) => theme.cancelButtonBackground || '#f3f3f3'};
   color: ${({ theme }) => theme.cancelButtonText || '#333'};
-
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
   &:hover {
     background-color: ${({ theme }) => theme.cancelButtonHover || '#e0e0e0'};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.45rem;
   }
 `;

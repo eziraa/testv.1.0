@@ -96,3 +96,18 @@ input .error {
 .scroll-box::-webkit-scrollbar-thumb:hover {
   background: #5555559c;
 }
+
+
+.hidden {
+  display: none;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+.inline-block {
+  display: inline-block;
+}
+.inline {
+  display: inline;
+}

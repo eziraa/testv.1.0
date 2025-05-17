@@ -4,13 +4,14 @@ import { useDialog } from '../contexts/dialog.context';
 import { Button, DeleteButton } from './Button';
 
 interface DialogProps {
-  triggerText: string;
+  triggerText: ReactNode;
   children: ReactNode;
   dialogId: string;
   isDanger?: boolean;
+  icon?: ReactNode;
 }
 
-const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, isDanger = false, children }) => {
+const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId,icon, isDanger = false, children }) => {
 
   const { openDialog, openedDialogs, closeDialog } = useDialog()
   const [isOpen, setIsOpen] = useState(false);
@@ -42,11 +43,11 @@ const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, isDanger = false
           isDanger
             ?
             (
-              <DeleteButton onClick={() => openDialog(dialogId)}>{triggerText}</DeleteButton>
+              <DeleteButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</DeleteButton>
             )
             :
             (
-              <Button onClick={() => { openDialog(dialogId); }}>{triggerText}</Button>
+              <Button onClick={() => { openDialog(dialogId); }}> {icon} {triggerText}</Button>
             )
         }
       </TriggerWrapper>
@@ -104,7 +105,7 @@ const Content = styled.div`
   background: ${({ theme }) => theme.dialogBackground || 'white'};
   border-radius: 12px;
   width: 90vw;
-  max-width: 550px;
+  max-width: fit-content;
   position: relative;
   box-shadow: ${({ theme }) => theme.dialogBoxShadow || '0 10px 30px rgba(0, 0, 0, 0.1)'};
   animation: ${slideIn} 0.25s ease forwards;
