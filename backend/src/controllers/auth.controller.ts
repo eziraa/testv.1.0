@@ -49,7 +49,9 @@ class AuthController {
       if (!isMatch) {
         res.status(401).json({ message: "Invalid credentials" });
       }
-      res.status(200).json({ message: "Login successful", user });
+      const authTokens = user.generateAuthToken()
+      res.setHeader("Authorization", `Bearer ${authTokens.accessToken}`);
+      res.status(200).json({ message: "Login successful", user , authTokens});
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error", error });
     }
@@ -58,7 +60,11 @@ class AuthController {
   // METHOD: to get user profile
   async getMe(req: Request, res: Response) {
     try {
-      const userId = req.params.id;
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized please login" });
+        return;
+      }
       const user = await User.findById(userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -72,7 +78,11 @@ class AuthController {
   // METHOD: to update user profile
   async updateUserProfile(req: Request, res: Response) {
     try {
-      const userId = req.params.id;
+      const userId = req.userId;
+
+      if(!userId){
+        res.status(401).json({ message: "Unauthorized please login" });
+      }
       const updatedData = req.body;
       const user = await User.findByIdAndUpdate(userId, updatedData, {
         new: true,
