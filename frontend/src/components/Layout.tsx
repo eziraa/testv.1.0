@@ -1,6 +1,36 @@
 import { styled } from "styled-components";
+import ThemeToggle from "./ToggleTheme";
+import SideBar from "./SideBar";
+import { Outlet } from "react-router-dom";
 
-const MainLayout = styled.div`
+interface Props {
+  toggleTheme: () => void;
+  isDark: boolean;
+}
+
+const MainLayout = ({isDark, toggleTheme}:Props) => {
+  
+
+  return (
+    <Layout className=''>
+      <Header>
+        <AppTitle>🎵 Resonix</AppTitle>
+        <ThemeToggle isDark={isDark} toggle={toggleTheme} />
+      </Header>
+      <Body>
+        <SideBar />
+        <ContentArea className='scroll-box'>
+          <Outlet />
+        </ContentArea>
+      </Body>
+    </Layout>
+  )
+}
+
+export default MainLayout
+
+
+const Layout = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -66,5 +96,5 @@ const Dismissable = styled.span`
   }
 `
 
-export { MainLayout, Header, AppTitle, Body, Sidebar, ContentArea , Dismissable};
+export { MainLayout, Header, AppTitle, Body, Sidebar, ContentArea, Dismissable };
 
