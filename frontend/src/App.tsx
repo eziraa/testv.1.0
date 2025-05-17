@@ -10,6 +10,7 @@ import { AppTitle, Body, ContentArea, Header, MainLayout } from './components/La
 
 import SongPage from './pages/songs';
 import NotFound from './pages/not-found';
+import AlbumsPage from './pages/albums';
 import ArtistsPage from './pages/artists';
 import { DialogProvider } from './contexts/dialog.context';
 import { ToastContainer } from 'react-toastify';
@@ -55,6 +56,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<Navigate to="/songs" />} />
                 <Route path="/songs" element={<SongPage />} />
                 <Route path="/artists" element={<ArtistsPage />} />
+                <Route path="/albums" element={<AlbumsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ContentArea>

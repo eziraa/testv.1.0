@@ -11,7 +11,7 @@ interface DialogProps {
   icon?: ReactNode;
 }
 
-const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId,icon, isDanger = false, children }) => {
+const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, icon, isDanger = false, children }) => {
 
   const { openDialog, openedDialogs, closeDialog } = useDialog()
   const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +60,7 @@ const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId,icon, isDanger = 
             } >
             <Content onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="dialog-title">
               {children}
-              <CloseButton onClick={() => closeDialog(dialogId)} aria-label="Close modal">&times;</CloseButton>
+              <CloseButton style={isDanger ? { color: "red" } : {}} onClick={() => closeDialog(dialogId)} aria-label="Close modal">&times;</CloseButton>
             </Content>
           </Overlay>
         </>
