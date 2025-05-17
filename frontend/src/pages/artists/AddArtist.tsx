@@ -5,7 +5,7 @@ import type { Artist, ArtistPayload } from '../../features/artists/artist.types'
 import { useForm } from 'react-hook-form';
 import { artistSchema, type ArtistFormData } from '../../validators/artist.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAppSelector } from '../../app/store';
+import {  useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
 
@@ -52,6 +52,7 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
       closeDialog(dialogId)
     }
   }, [mutuated])
+
 
 
   return (
