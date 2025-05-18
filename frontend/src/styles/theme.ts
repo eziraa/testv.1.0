@@ -1,5 +1,8 @@
 const defaultTheme = {
   // Button colors
+  acccent: "#007bff",
+  danger: "#ff5c5c",
+
   buttonEdit: "#007bff",
   buttonDelete: "#ff5c5c",
   buttonPrimaryBackground: "#0070f3",
@@ -8,7 +11,7 @@ const defaultTheme = {
   buttonDeleteBackground: "#ff4d4f",
   buttonDeleteHoverBackground: "#d9363e",
   focusOutline: "#0070f3",
-  
+
   // Dialog theme
   dialogBackground: "#fff",
   dialogBoxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
@@ -24,22 +27,23 @@ const defaultTheme = {
 
   // Form colors
   errorColor: "#e2301d",
-  textDanger: "#d32f2f"
+  textDanger: "#d32f2f",
 };
 export const lightTheme = {
   ...defaultTheme,
   // Light theme colors
   background: "#f9f9f9",
-  cardBackground: "#ffffff",
+  cardBackground: "#fff",
   cardShadow: "0 8px 20px rgba(0, 0, 0, 0.07)",
   borderColor: "#eaeaea",
 
   overlayBackground: "rgba(255, 255, 255, 0.5)",
 
-
   // Text colors
   textPrimary: "#333333",
   textSecondary: "#555555",
+  primary: "#7c3aed", // purple-600
+  secondary: "#4f46e5",
 
   // Form colors
   formBackground: "#fff",
@@ -49,7 +53,6 @@ export const lightTheme = {
   inputTextColor: "#000",
   inputBorder: "#ccc",
   inputFocusBorder: "#007bff",
-
 
   primaryButtonBg: "#007bffdd",
   primaryButtonColor: "#fff",
@@ -69,18 +72,33 @@ export const lightTheme = {
   border: " #eaeaea",
 
   // Cancel btn theme
-  cancelButtonBackground: '#f3f3f3',
-  cancelButtonText: '#333333',
-  cancelButtonHover: '#e0e0e0',
+  cancelButtonBackground: "#f3f3f3",
+  cancelButtonText: "#333333",
+  cancelButtonHover: "#e0e0e0",
 
-  cardBg: '#ffffff',
-  textMuted: '#6b7280',
+  cardBg: "#ffffff",
+  textMuted: "#6b7280",
+
+  inputBg: "#ffffff",
+  buttonBg: "#4f46e5",
+  buttonText: "#ffffff",
+
+  // Muted
+  mutedBackground: "#f4f6f8",
+  mutedCardBackground: "#ffffff",
+  mutedBorder: "#dfe3e8",
+  mutedTextPrimary: "#2c3e50",
+  mutedTextSecondary: "#7f8c8d",
+  mutedHighlight: "#bdc3c7",
+  mutedErrorColor: "#e74c3c",
+  mutedButtonBackground: "#ecf0f1",
+  mutedButtonHover: "#d0d7de",
 };
 
 export const darkTheme = {
   // Dark theme colors
   background: "#121212",
-  cardBackground: "#1e1e1e",
+  cardBackground: "#1f2937",
   cardShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
   borderColor: "#333333",
 
@@ -88,6 +106,9 @@ export const darkTheme = {
   textPrimary: "#ffffff",
   textSecondary: "#cccccc",
   ...defaultTheme,
+
+  primary: "#7c3aed",
+  secondary: "#4f46e5",
 
   // Form colors
   formBackground: "#222",
@@ -112,19 +133,33 @@ export const darkTheme = {
   // Spinner colors
   spinnerColor: "#3399ff",
   spinnerBackground: "rgba(255, 255, 255, 0.1)",
-  
+
   // fonts
   font: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   border: " #333333",
 
   // Cancel btn theme
-  cancelButtonBackground: '#333333',
-  cancelButtonText: '#f1f1f1',
-  cancelButtonHover: '#444444',
+  cancelButtonBackground: "#333333",
+  cancelButtonText: "#f1f1f1",
+  cancelButtonHover: "#444444",
 
-  textMuted: '#9ca3af',
-  cardBg: '#1f2937',
+  textMuted: "#9ca3af",
+  cardBg: "#1f2937",
+
+  inputBg: "#1f2937",
+  buttonBg: "#6366f1",
+  buttonText: "#ffffff",
+
+  // Muted
+  mutedBackground: "#454545",
+  mutedCardBackground: "#2c2c2c",
+  mutedBorder: "#3d3d3d",
+  mutedTextPrimary: "#f1f1f1",
+  mutedTextSecondary: "#a0a0a0",
+  mutedHighlight: "#4b6584",
+  mutedErrorColor: "#e57373",
+  mutedButtonBackground: "#3b3b3b",
+  mutedButtonHover: "#505050",
 };
 
 export type ThemeType = typeof lightTheme;
-

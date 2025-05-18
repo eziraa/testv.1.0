@@ -6,13 +6,13 @@ declare module 'styled-components' {
 }
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${({ theme }) => theme.background};
-    color: ${({ theme }) => theme.textPrimary};
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+    body {
+        background-color: ${({ theme }) => theme.background};
+        color: ${({ theme }) => theme.textPrimary};
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
     a {
         color: ${({ theme }) => theme.textPrimary};
@@ -22,18 +22,16 @@ const GlobalStyle = createGlobalStyle`
     a:hover {
         color: ${({ theme }) => theme.buttonEdit};
     }
+
     button {
-        background-color: ${({ theme }) => theme.buttonEdit};
-        color: white;
         border: none;
         padding: 0.5rem 1rem;
         border-radius: 4px;
         cursor: pointer;
         transition: background 0.15s ease;
+        color: ${({ theme }) => theme.textPrimary};
     }
-    button:hover {
-        background-color: ${({ theme }) => theme.buttonDelete};
-    }
+
     input, textarea {
         background-color: ${({ theme }) => theme.cardBackground};
         color: ${({ theme }) => theme.textPrimary};
@@ -76,21 +74,11 @@ const GlobalStyle = createGlobalStyle`
     option:hover {
         background-color: ${({ theme }) => theme.buttonEdit};
         color: white;
-        border-radius: 4px;
-        padding: 0.5rem;
-        width: 100%;
-        box-sizing: border-box;
-        transition: border 0.3s ease;
     }
 
     option::selection {
         background-color: ${({ theme }) => theme.buttonEdit};
         color: white;
-        border-radius: 4px;
-        padding: 0.5rem;
-        width: 100%;
-        box-sizing: border-box;
-        transition: border 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -100,7 +88,6 @@ const GlobalStyle = createGlobalStyle`
         font-weight: normal;
         text-align: center;
         font-family: sans-serif;
-        font-size: 1.5rem;
         margin-bottom: 1rem;
     }
     h1 {
@@ -127,6 +114,7 @@ const GlobalStyle = createGlobalStyle`
         font-size: 0.875rem;
         margin-bottom: 0.5rem;
     }
+
     .container {
         max-width: 1200px;
         margin: 0 auto;
