@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './styles/globalStyls';
@@ -15,8 +15,11 @@ import { ToastContainer } from 'react-toastify';
 import SignUpPage from './pages/auth/signup';
 import LoginPage from './pages/auth/login';
 import HomePage from './pages/home';
+import { useAppDispatch } from './app/store';
+import { getMe } from './features/auth/auth.slice';
 
 const App: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [isDark, setIsDark] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark';
@@ -25,6 +28,15 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }, [isDark]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      dispatch(getMe());
+    }
+
+  }, [dispatch]);
+
 
   const toggleTheme = () => setIsDark((prev) => !prev);
 

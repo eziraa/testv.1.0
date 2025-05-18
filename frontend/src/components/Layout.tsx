@@ -2,20 +2,45 @@ import { styled } from "styled-components";
 import ThemeToggle from "./ToggleTheme";
 import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
+import React from "react";
+import ProfileDropdown from "./ProfileDropDown";
+import { User } from "lucide-react";
+import { CloseButton } from "./Button";
 
 interface Props {
   toggleTheme: () => void;
   isDark: boolean;
 }
 
-const MainLayout = ({isDark, toggleTheme}:Props) => {
-  
+const MainLayout = ({ isDark, toggleTheme }: Props) => {
+
+  const [showDropdown, setShowDropdown] = React.useState(false);
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.profile-dropdown') && !target.closest('.avatar')) {
+      setShowDropdown(false);
+    }
+  };
+  React.useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
     <Layout className=''>
       <Header>
         <AppTitle>🎵 Resonix</AppTitle>
-        <ThemeToggle isDark={isDark} toggle={toggleTheme} />
+        <RightSection>
+          <ThemeToggle isDark={isDark} toggle={toggleTheme} />
+          <ProfileWrapper>
+            <button className="avatar" style={{display: "inline",backgroundColor:"transparent", padding:"0rem"}} onClick={() => setShowDropdown(prev => !prev)} >
+              <Avatar src="/avatar.png" fallbackIcon={<User size={15}/>}  />
+            </button >
+            {showDropdown && <ProfileDropdown />}
+          </ProfileWrapper>
+        </RightSection>
       </Header>
       <Body>
         <SideBar />
@@ -96,5 +121,66 @@ const Dismissable = styled.span`
   }
 `
 
-export { MainLayout, Header, AppTitle, Body, Sidebar, ContentArea, Dismissable };
+const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+`
+
+const ProfileWrapper = styled.div`
+  position: relative;
+`
+
+const AvatarImage = styled.img`
+  cursor: pointer;
+  transition: transform 0.2s;
+`
+
+const AvatarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  background-color: ${({ theme }) => theme.mutedBackground};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  z-index: 1;
+  &:hover {
+    padding: 0.04rem;
+    transition: background 0.2s;
+  }
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+  }
+`
+const Avatar = ({ src , fallbackIcon}: {
+  src: string;
+  fallbackIcon?: React.ReactNode;
+}) => {
+  // Check if the src is a valid URL
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+  return (
+    <AvatarWrapper>
+      {isValidUrl(src) ? (
+        <AvatarImage src={src} alt="User Avatar" />
+      ) : (
+        fallbackIcon || <span style={{ fontSize: "1.5rem"  }}>No</span>
+      )}
+    </AvatarWrapper>
+  )
+}
+
+export { MainLayout, Header, AppTitle, Body, Sidebar,Avatar, ContentArea, Dismissable };
 
