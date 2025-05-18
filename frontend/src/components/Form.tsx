@@ -10,13 +10,20 @@ const FormContainer = styled.form`
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.formBoxShadow || '0 4px 10px rgba(0, 0, 0, 0.1)'};
   margin: 0 auto;
-
+  display: flex;
+  flex-direction: column;
   @media (max-width: 700px) {
     width: 90%;
     max-width: 90%;
     padding: 1rem;
     border-radius: 8px; 
     box-shadow: ${({ theme }) => theme.formBoxShadow || '0 2px 5px rgba(0, 0, 0, 0.1)'};
+  }
+
+  input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -25,11 +32,9 @@ interface InputProps {
 }
 
 const Input = styled.input<InputProps>`
-  display: block;
-  width: 90%;
-  max-width: 96%;
-  margin-bottom: 1rem;
-  padding: 0.8rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.2rem;
   border: 1px solid
     ${({ hasError, theme }) => (hasError ? theme.errorColor || 'red' : theme.inputBorder || '#ccc')};
   border-radius: 8px;
@@ -47,8 +52,7 @@ const Input = styled.input<InputProps>`
 
 const Select = styled.select<InputProps>`
   display: block;
-  width: 90%;
-  max-width: 96%;
+  width: 100%;
   margin-bottom: 1rem;
   padding: 0.8rem;
   border: 1px solid
@@ -94,13 +98,12 @@ const SubmitButton = styled(ButtonRoot)`
 const ErrorMessage = styled.span<InputProps>`
   color: ${({ theme }) => theme.errorColor || 'red'};
   font-size: 0.8rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
   display: ${({ hasError }) => (hasError ? 'block' : 'none')};
 `;
 
-const InputContainer = styled.div`
-  margin-bottom: 1rem;
+const InputGroup= styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -109,8 +112,8 @@ const InputContainer = styled.div`
 const Label = styled.label`
   font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.15rem;
   color: ${({ theme }) => theme.labelColor || '#333'};
 `;
 
-export { FormContainer, Input,Select, InputContainer, Label, ErrorMessage, SubmitButton };
+export { FormContainer, Input,Select, InputGroup, Label, ErrorMessage, SubmitButton };

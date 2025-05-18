@@ -13,6 +13,7 @@ import PlaylistPage from './pages/playlists';
 import { DialogProvider } from './contexts/dialog.context';
 import { ToastContainer } from 'react-toastify';
 import SignUpPage from './pages/auth/signup';
+import LoginPage from './pages/auth/login';
 
 const App: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -56,6 +57,9 @@ const App: React.FC = () => {
 
           {/* Outside layout for auth pages */}
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>
 
