@@ -10,7 +10,7 @@ class PlaylistController {
   // METHOD: to get all playlists
   async getAllPlaylists(req: Request, res: Response) {
     try {
-      const playlists = await Playlist.find();
+      const playlists = await Playlist.find().populate("songs");
       res.status(200).json(playlists);
     } catch (error) {
       res.status(500).json({ message: "Error fetching playlists", error });
