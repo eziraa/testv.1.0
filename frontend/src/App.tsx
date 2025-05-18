@@ -14,6 +14,7 @@ import { DialogProvider } from './contexts/dialog.context';
 import { ToastContainer } from 'react-toastify';
 import SignUpPage from './pages/auth/signup';
 import LoginPage from './pages/auth/login';
+import HomePage from './pages/home';
 
 const App: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -47,8 +48,9 @@ const App: React.FC = () => {
           <Route element={<MainLayout toggleTheme={toggleTheme} isDark={isDark} />}>
             <Route
               path="/"
-              element={<Navigate to="/songs" replace />}
+              element={<Navigate to="/home" replace />}
             />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/songs" element={<SongPage />} />
             <Route path="/artists" element={<ArtistsPage />} />
             <Route path="/albums" element={<AlbumsPage />} />
