@@ -20,7 +20,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   useEffect(() => {
     dispatch(fetchSongs());
-  }, [dispatch]);
+  }, []);
 
   if (fetching) return <LoadingPage />;
   if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
@@ -28,37 +28,48 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   return (
     <Wrapper>
+      <Title>🎵 Song Library</Title>
       <ListContainer>
         {songs?.map((song) => (
           <StyledCard key={song._id}>
-            <SongInfo>
-              <h3> <strong> <i>Title</i> </strong> {song.title}</h3>
-              <p><strong>Artist:</strong> {song.artist?.name}</p>
-              <p><strong>Album:</strong> {song.album}</p>
-              <p><strong>Genre:</strong> {song.genre}</p>
-            </SongInfo>
-            <ButtonRow>
+            <TopSection>
+              <ArtworkPlaceholder>
+                {song.genre ? (
+                  <img src={song.genre} alt={`${song.title} cover`} />
+                ) : (
+                  <span>🎶</span>
+                )}
+              </ArtworkPlaceholder>
+              <SongDetails>
+                <SongTitle>{song.title}</SongTitle>
+                <SongSubInfo>{song.artist?.name} • {song.album}</SongSubInfo>
+                <GenreTag>{song.genre || <i>No genre</i>}</GenreTag>
+              </SongDetails>
+            </TopSection>
+
+            <ActionRow>
               <AddSong
                 editingSong={{
                   ...song,
                   artist: song.artist?._id,
                 }}
                 onSubmit={onEdit}
+                iconOnly
               />
               <DeleteDialog
-                  dialogId={`delete-artist-${song._id}`}
-                  triggerText="Delete"
-                  itemName={"Artist"}
-                  deleteStatus={{
-                    deleted: mutuated,
-                    error: error,
-                    deleting: deleting
-                  }}
-                  onDelete={() => {
-                    onDelete(song._id);
-                  }}
-                />
-            </ButtonRow>
+                dialogId={`delete-artist-${song._id}`}
+                triggerText=""
+                itemName={"Artist"}
+                deleteStatus={{
+                  deleted: mutuated,
+                  error: error,
+                  deleting: deleting,
+                }}
+                onDelete={() => {
+                  onDelete(song._id);
+                }}
+              />
+            </ActionRow>
           </StyledCard>
         ))}
       </ListContainer>
@@ -68,59 +79,100 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
 export default SongList;
 
+// Styled Components
+
 const Wrapper = styled.div`
   padding: 2rem;
   max-width: 1200px;
-  width: 80%;
   margin: 0 auto;
-  background-color: ${({ theme }) => theme.background};
+  width: 80%;
 `;
 
 const Title = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  font-size: 2.25rem;
   text-align: center;
+  margin-bottom: 2rem;
   color: ${({ theme }) => theme.textPrimary};
 `;
 
 const ListContainer = styled.div`
-  width: 100%;
   display: grid;
-  gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
 `;
 
 const StyledCard = styled(Card)`
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background-color: ${({ theme }) => theme.cardBackground};
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.25rem;
-  background-color: ${({ theme }) => theme.cardBackground};
-  border: 1px solid ${({ theme }) => theme.border};
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
 `;
 
-const SongInfo = styled.div`
-  margin-bottom: 1rem;
+const TopSection = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const ArtworkPlaceholder = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 0.75rem;
+  background-color: ${({ theme }) => theme.mutedBackground};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const SongDetails = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
+`;
 
-  h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-    color: ${({ theme }) => theme.textPrimary};
-  }
+const SongTitle = styled.h3`
+  font-size: 1.25rem;
+  margin: 0;
+  color: ${({ theme }) => theme.textPrimary};
+`;
 
-  p {
-    margin: 0.25rem 0;
-    color: ${({ theme }) => theme.textSecondary};
-  }
+const SongSubInfo = styled.p`
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.textSecondary};
+  margin: 0.25rem 0;
+`;
 
-  strong {
-    color: ${({ theme }) => theme.textPrimary};
-  }
+const GenreTag = styled.span`
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background-color: ${({ theme }) => theme.mutedBackground};
+  color: ${({ theme }) => theme.textMuted};
+  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  width: fit-content;
+`;
+
+const ActionRow = styled(ButtonRow)`
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 `;
 
 const ErrorMessage = styled.div`
