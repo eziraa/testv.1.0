@@ -10,6 +10,7 @@ router.post("/login", authController.login);
 router.post("/signup", authController.signUp);
 router.patch("/update-profile",AuthenticatedOnly, authController.updateUserProfile);
 router.get("/me",AuthenticatedOnly, authController.getMe);
+router.post("/logout",AuthenticatedOnly, authController.logout);
 
 
 export default router;

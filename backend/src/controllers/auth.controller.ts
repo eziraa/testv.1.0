@@ -69,7 +69,7 @@ class AuthController {
       if (!user) {
         res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json(user);
+      res.status(200).json({user: user});
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error", error });
     }
@@ -91,6 +91,26 @@ class AuthController {
         res.status(404).json({ message: "User not found" });
       }
       res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error });
+    }
+  }
+
+  // METHOD: to log out
+  async logout(req: Request, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized please login" });
+        return;
+      }
+      const user = await User.findById(userId);
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+      await user.save();
+      res.status(200).json({ message: "Logout successful" });
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error", error });
     }
