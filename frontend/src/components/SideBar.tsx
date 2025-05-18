@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Menu, X, Music, User, Music2, HeartIcon } from 'lucide-react';
+import { Menu, X, Music, User, Music2, HeartIcon, HomeIcon } from 'lucide-react';
 import { CloseButton } from './Button';
 
 interface  SideBarItem{
@@ -11,6 +11,7 @@ interface  SideBarItem{
 }
 
 const sideBarItems: SideBarItem[] = [
+  {name: "Home", icon: <HomeIcon size={18} />, url:"/home"},
   { name: 'Artists', icon: <User size={18} />, url: '/artists' },
   { name: 'Songs', icon: <Music2 size={18} />, url: '/songs' },
   { name: 'Albums', icon: <Music size={18} />, url: '/albums' },
