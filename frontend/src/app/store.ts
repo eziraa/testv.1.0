@@ -3,6 +3,8 @@ import createSagaMiddleware from 'redux-saga';
 import { songReducer } from '../features/songs/song.slice';
 import { artistReducer } from '../features/artists/artist.slice';
 import { albumReducer } from '../features/albums/album.slice';
+import { playlistReducer } from '../features/playlists/playlist.slice';
+import {authReducer} from '../features/auth/auth.slice';
 import rootSaga from './root.saga';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
 
@@ -13,6 +15,8 @@ export const store = configureStore({
     artists: artistReducer,
     songs: songReducer,
     albums: albumReducer,
+    playlists: playlistReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
