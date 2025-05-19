@@ -65,9 +65,14 @@ class AuthController {
         res.status(401).json({ message: "Unauthorized please login" });
         return;
       }
-      const withFavorite = req.query.withFavorite === "true"
-      const user = await User.findById(userId).populate(withFavorite ? 'favorites' : "");
-      if (!user) {
+      const user = await User.findById(userId)
+      .populate({
+        path: 'favorites',
+        populate: {
+          path: 'artist',
+        },
+      });
+          if (!user) {
         res.status(404).json({ message: "User not found" });
       }
       res.status(200).json({user: user});
