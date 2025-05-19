@@ -5,7 +5,17 @@ import type { SongPayload } from './song.types';
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/songs`;
 
 export const songAPI = {
-  fetchSongs: () => axiosClient.get(API_BASE),
+  fetchSongs: (params?:string) => {
+    const searchParams = new URLSearchParams(params);
+    searchParams.forEach((value, key) => {
+      if (!value) {
+        searchParams.delete(key);
+      }
+    });
+    
+    const url = params ? `${API_BASE}?${searchParams.toString()}` : API_BASE;
+    return axiosClient.get(url);
+  },
   createSong: (data: SongPayload) => {
     for (const key in data) {
       const typedKey = key as keyof SongPayload;

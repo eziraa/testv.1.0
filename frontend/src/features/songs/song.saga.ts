@@ -39,9 +39,9 @@ export enum SongActionTypes {
   FAVORITE_SONG_FAILURE = "songs/favoriteSongFailure",
 }
 
-function* fetchSongsWorker(): Generator<any, void, { data: any }> {
+function* fetchSongsWorker(action:{type: string, payload?:string}): Generator<any, void, { data: any }> {
   try {
-    const response = yield call(songAPI.fetchSongs);
+    const response = yield call(songAPI.fetchSongs, action.payload);
     yield put(fetchSongsSuccess(response.data));
   } catch (error: any) {
     yield put(fetchSongsFailure(error.message));

@@ -10,10 +10,67 @@ import mongoose from "mongoose";
 // SONG CONTROLLER CLASS: to handle song-related requests
 class SongController {
   // METHOD: to get all songs
-  async getAllSongs(_: Request, res: Response) {
-    const songs = await Song.find().populate("artist").populate("album");
-    res.json(songs);
+  async getAllSongs(req: Request, res: Response) {
+    try {
+      const { search } = req.query;
+      const matchStage: any = {};
+  
+      if (search) {
+        const regex = new RegExp(search as string, 'i');
+        matchStage.$or = [
+          { title: { $regex: regex } },
+          { 'artistData.name': { $regex: regex } },
+        ];
+      }
+  
+      const songs = await Song.aggregate([
+        {
+          $lookup: {
+            from: 'artists',
+            localField: 'artist',
+            foreignField: '_id',
+            as: 'artistData',
+          },
+        },
+        {
+          $unwind: '$artistData',
+        },
+        {
+          $lookup: {
+            from: 'albums',
+            localField: 'album',
+            foreignField: '_id',
+            as: 'albumData',
+          },
+        },
+        {
+          $unwind: {
+            path: '$albumData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: matchStage,
+        },
+        {
+          $project: {
+            title: 1,
+            genre: 1,
+            audioUrl: 1,
+            releaseDate: 1,
+            artist: '$artistData',
+            album: '$albumData',
+          },
+        },
+      ]);
+  
+      res.json(songs);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch songs' });
+    }
   }
+  
 
   // METHOD: to create a new song
   createSong = async (req: Request, res: Response): Promise<void> => {

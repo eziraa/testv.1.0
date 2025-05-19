@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { use, useEffect } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
@@ -9,6 +9,7 @@ import LoadingPage from '../../components/LoadingPage';
 import AddSong from './AddSong';
 import DeleteDialog from '../../components/DeleteDialog';
 import { Dot, Heart,  Pencil, Trash2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 interface Props {
   onEdit: (song: SongPayload, id?: string) => void;
@@ -16,14 +17,15 @@ interface Props {
 }
 
 const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
+  const [searchParams] = useSearchParams();
   const theme = useTheme()
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user)
   const { songs, fetchError, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
 
   useEffect(() => {
-    dispatch(fetchSongs());
-  }, []);
+    dispatch(fetchSongs(searchParams.toString()));
+  }, [searchParams]);
 
   if (fetching) return <LoadingPage />;
   if (fetchError) return <ErrorMessage>Error: {fetchError}</ErrorMessage>;
@@ -45,7 +47,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
               <SongDetails>
                 <SongTitle>{song.title}</SongTitle>
                 <SongSubInfo>{song.artist?.name} <Dot style={{
-                  color: theme.acccent
+                  color: theme.accent
                 }} /> {song.album}</SongSubInfo>
                 <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
@@ -114,12 +116,6 @@ const Wrapper = styled.div`
   width: 80%;
 `;
 
-const Title = styled.h2`
-  font-size: 2.25rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: ${({ theme }) => theme.textPrimary};
-`;
 
 const ListContainer = styled.div`
   display: grid;
@@ -195,7 +191,7 @@ export const MutedElement = styled.span`
   margin-top: 0.25rem;
 
   &:hover{
-    background-color: ${({ theme }) => theme.acccent};
+    background-color: ${({ theme }) => theme.accent};
     color: white;
     cursor: pointer;
     transition: all 0.3s;

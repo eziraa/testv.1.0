@@ -40,7 +40,7 @@ const songSlice = createSlice({
   name: "songs",
   initialState,
   reducers: {
-    fetchSongs: (state) => {
+    fetchSongs: (state, _: PayloadAction<string>) => {
       state.fetching = true;
       state.fetchError = null;
     },

@@ -8,6 +8,7 @@ import AddSong from './AddSong';
 import { createSong, deleteSong, updateSong } from '../../features/songs/song.slice';
 import { Button } from '../../components/Button';
 import { Plus } from 'lucide-react';
+import Search from '../../components/Search';
 
 
 const SongsPage: React.FC = () => {
@@ -30,6 +31,7 @@ const SongsPage: React.FC = () => {
     <PageWrapper>
       <Header>
         <h1>🎵 Songs</h1>
+        <Search/>
         <AddSong
             onSubmit={handleSubmit}
             triggerContent={<Button > <Plus size={18}/> Song </Button>}
@@ -84,13 +86,7 @@ const Header = styled.div`
   @media (max-width: 768px) {
     h1 {
       font-size: 1.5rem;
-      margin-bottom: 1rem;
     }
   }
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-    }
-  }
+  
 `;
