@@ -28,7 +28,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       thunk: false,
       erializableCheck: {
-        ignoredActions: ["albums/createAlbum"],
+        ignoredActions: ["albums/createAlbum", "songs/createSong"],
         ignoredActionPaths: ["payload.coverImage"],
         ignoredPaths: ["album.coverImage"],
       },

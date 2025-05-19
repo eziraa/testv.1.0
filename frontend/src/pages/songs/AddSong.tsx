@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorMessage, FormContainer, Input, Select, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
-import type { Song, SongPayload } from '../../features/songs/song.types';
+import type { Song } from '../../features/songs/song.types';
 import { useForm } from 'react-hook-form';
 import { songSchema, type SongFormData } from '../../validators/song.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,7 @@ import { resetMutation } from '../../features/songs/song.slice';
 import { ButtonRow, DeleteButton } from '../../components/Button';
 
 interface Props {
-  onSubmit: (song: SongPayload, id?: string) => void;
+  onSubmit: (song: FormData, id?: string) => void;
   editingSong?: Song | null;
   triggerContent: React.ReactNode;
 }
@@ -22,6 +22,7 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
 
   const editMode = !!editingSong;
   const dispatch = useAppDispatch()
+  const [audioFile, setAudioFile] = useState<File | null>(null);
   const { closeDialog, openedDialogs } = useDialog()
   const { artists } = useAppSelector(state => state.artists)
   const dialogId = React.useMemo(() => `${editingSong ? "edit-song-" + editingSong._id : "add-song"}`, [editingSong]);
@@ -50,7 +51,7 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
       artist: editingSong?.artist ?? '',
       album: editingSong?.album ?? '',
       genre: editingSong?.genre ?? '',
-      realseDate: editingSong?.releaseDate ?? '',
+      releaseDate: editingSong?.releaseDate ?? '',
       audioUrl: editingSong?.audioUrl ?? '',
     });
   }, [editingSong, reset, open]);
@@ -58,7 +59,16 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
 
   const onDataSubmit = (data: SongFormData) => {
     try {
-      onSubmit(data, editingSong?._id);
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('artist', data.artist);
+      data.album && formData.append('album', data.album);
+      data.genre && formData.append('genre', data.genre);
+      data.releaseDate && formData.append('releaseDate', data.releaseDate);
+      if (audioFile) {
+        formData.append('audio', audioFile);
+      }
+      onSubmit(formData, editingSong?._id);
     } catch (error) {
       if (error instanceof Error && error.message) {
         toast.error(error.message);
@@ -92,7 +102,7 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
         artist: editingSong?.artist ?? '',
         album: editingSong?.album ?? '',
         genre: editingSong?.genre ?? '',
-        realseDate: editingSong?.releaseDate ?? '',
+        releaseDate: editingSong?.releaseDate ?? '',
         audioUrl: editingSong?.audioUrl ?? '',
       });
     }
@@ -157,8 +167,13 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
           {errors.genre?.message}
         </ErrorMessage>
         <Input
-          placeholder="Audio URL"
-          {...register('audioUrl')}
+          type='file'
+          accept="audio/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setAudioFile(file);
+          }}}
           hasError={!!errors.audioUrl}
         />
         <ErrorMessage hasError={!!errors.audioUrl}>
@@ -172,7 +187,7 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
                 artist: editingSong?.artist ?? '',
                 album: editingSong?.album ?? '',
                 genre: editingSong?.genre ?? '',
-                realseDate: editingSong?.releaseDate ?? '',
+                releaseDate: editingSong?.releaseDate ?? '',
                 audioUrl: editingSong?.audioUrl ?? '',
               });
             }}

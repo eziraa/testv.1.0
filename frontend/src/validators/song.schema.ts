@@ -5,7 +5,7 @@ export const songSchema = z.object({
   artist: z.string().min(1, 'Artist is required'),
   genre: z.string().optional(),
   album: z.string().optional(),
-  realseDate: z.string().optional(),
+  releaseDate: z.string().optional(),
   audioUrl: z.string().optional(),
 });
 

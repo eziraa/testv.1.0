@@ -14,7 +14,7 @@ import mongoose, { Document, Schema } from 'mongoose';
     artist: { type: mongoose.Schema.Types.ObjectId , ref: 'Artist' },
     album: { type: mongoose.Schema.Types.ObjectId, ref: 'Album' },
     genre: String,
-    audioUrl: { type: String , required: false},
+    audioUrl: String,
     releaseDate: { type: Date, default: Date.now },
   },{ timestamps: true });
   

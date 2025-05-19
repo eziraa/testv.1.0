@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import {  type SongPayload,  } from "./song.types";
 import type { Artist } from "../artists/artist.types";
 
 export interface Song {
@@ -69,7 +68,7 @@ const songSlice = createSlice({
 
     },
 
-    createSong: (state, _: PayloadAction<SongPayload>) => {
+    createSong: (state, _: PayloadAction<FormData>) => {
       state.error = null;
       state.mutuated= false;
       state.creating = true;
@@ -101,7 +100,7 @@ const songSlice = createSlice({
       state.deleting = false;
     },
 
-    updateSong: (state, _: PayloadAction<{data: SongPayload, id:string}>) => {
+    updateSong: (state, _: PayloadAction<{data: FormData, id:string}>) => {
       state.error = null;
       state.mutuated= false
       state.updating = true;

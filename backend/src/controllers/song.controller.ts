@@ -6,6 +6,8 @@ import {
 } from "../validators/song.validator";
 import User from "../models/User";
 import mongoose from "mongoose";
+import FileUploader from "../utils/FileUploader";
+
 
 // SONG CONTROLLER CLASS: to handle song-related requests
 class SongController {
@@ -14,38 +16,38 @@ class SongController {
     try {
       const { search } = req.query;
       const matchStage: any = {};
-  
+
       if (search) {
-        const regex = new RegExp(search as string, 'i');
+        const regex = new RegExp(search as string, "i");
         matchStage.$or = [
           { title: { $regex: regex } },
-          { 'artistData.name': { $regex: regex } },
+          { "artistData.name": { $regex: regex } },
         ];
       }
-  
+
       const songs = await Song.aggregate([
         {
           $lookup: {
-            from: 'artists',
-            localField: 'artist',
-            foreignField: '_id',
-            as: 'artistData',
+            from: "artists",
+            localField: "artist",
+            foreignField: "_id",
+            as: "artistData",
           },
         },
         {
-          $unwind: '$artistData',
+          $unwind: "$artistData",
         },
         {
           $lookup: {
-            from: 'albums',
-            localField: 'album',
-            foreignField: '_id',
-            as: 'albumData',
+            from: "albums",
+            localField: "album",
+            foreignField: "_id",
+            as: "albumData",
           },
         },
         {
           $unwind: {
-            path: '$albumData',
+            path: "$albumData",
             preserveNullAndEmptyArrays: true,
           },
         },
@@ -58,24 +60,34 @@ class SongController {
             genre: 1,
             audioUrl: 1,
             releaseDate: 1,
-            artist: '$artistData',
-            album: '$albumData',
+            artist: "$artistData",
+            album: "$albumData",
           },
         },
       ]);
-  
+
       res.json(songs);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: 'Failed to fetch songs' });
+      res.status(500).json({ error: "Failed to fetch songs" });
     }
   }
-  
 
   // METHOD: to create a new song
   createSong = async (req: Request, res: Response): Promise<void> => {
     try {
-      const parsed = SongSchemaZod.parse(req.body);
+      let audioUrl: string | undefined;
+
+      // If image was uploaded, get its URL
+      if (req.file) {
+        audioUrl =  new FileUploader().getFileUrl(req, req.file.path);
+      }
+      const inputData = {
+        ...req.body,
+        audioUrl: audioUrl ?? req.body.audioUrl,
+      };
+
+      const parsed = SongSchemaZod.parse(inputData);
       const song = new Song(parsed);
       await song.save();
 
@@ -117,7 +129,17 @@ class SongController {
   // METHOD: to update song
   async updateSong(req: Request, res: Response): Promise<void> {
     try {
-      const parsed = SongUpdateSchemaZod.parse(req.body);
+      let audioUrl: string | undefined;
+
+      // If image was uploaded, get its URL
+      if (req.file) {
+        audioUrl = new FileUploader().getFileUrl(req, req.file.path);
+      }
+      const inputData = {
+        ...req.body,
+        audioUrl: audioUrl ?? req.body.audioUrl,
+      };
+      const parsed = SongUpdateSchemaZod.parse(inputData);
       const song = await Song.findByIdAndUpdate(req.params.id, parsed, {
         new: true,
       });
@@ -180,11 +202,10 @@ class SongController {
       }
 
       await User.findByIdAndUpdate(userId, {
-        favorites: [...updatedFavorites]
-      })
+        favorites: [...updatedFavorites],
+      });
 
-      
-      res.status(200).json({message: "Song Favorited"})
+      res.status(200).json({ message: "Song Favorited" });
     } catch (error) {
       if (error instanceof Error && "errors" in error) {
         res.status(400).json({
@@ -194,7 +215,6 @@ class SongController {
       }
 
       res.status(500).json({ message: "Internal Server error" });
-
     }
   }
 }

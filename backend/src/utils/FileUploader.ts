@@ -9,8 +9,8 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 export class FileUploader {
   private uploadFolder: string;
 
-  constructor(folderName: string = 'uploads') {
-    this.uploadFolder = path.join(__dirname, `../public/${folderName}`);
+  constructor( private folderName: string = 'uploads') {
+    this.uploadFolder = path.join(__dirname, `../public/${this.folderName}`);
 
     // Ensure upload directory exists
     if (!fs.existsSync(this.uploadFolder)) {
@@ -24,10 +24,6 @@ export class FileUploader {
       storage: multer.diskStorage({
         destination: (_req, _file, cb) => cb(null, this.uploadFolder),
         filename: (req, file, cb) => {
-          console.log("Before")
-          console.log("File Name: ", file.originalname);
-          console.log("File Path: ", file.path);
-          console.log("File URL: ", this.getFileUrl(req, file.filename));
           const ext = path.extname(file.originalname);
           const baseName = req.body?.fileName?.trim();
 
@@ -37,11 +33,6 @@ export class FileUploader {
             : `${uuidv4()}${ext}`;
 
           cb(null, safeName);
-
-          console.log("After")
-          console.log("File Name: ", file.originalname);
-          console.log("File Path: ", file.path);
-          console.log("File URL: ", this.getFileUrl(req, file.filename));
         },
       }),
       fileFilter: (_req, file, cb) => {
@@ -58,14 +49,15 @@ export class FileUploader {
     });
   }
 
-  public getFileUrl(req: any, filename: string): string {
-    return `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+  public getFileUrl(req: any, filePath: string): string {
+    const relativePath = filePath?.split('src/public/')[1]
+    return `${req.protocol}://${req.get('host')}/${relativePath}`;
   }
 
-  public deleteFile(filename: string): void {
-    const filePath = path.join(this.uploadFolder, filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+  public deleteFile(filePath: string): void {
+    const relativePath = filePath?.split('src/public/')[1]
+    if (fs.existsSync(relativePath)) {
+      fs.unlinkSync(relativePath);
     }
   }
 }

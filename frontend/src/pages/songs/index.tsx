@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import SongList from './SongList';
-import type {  SongPayload } from '../../features/songs/song.types';
 import AddSong from './AddSong';
 import { createSong, deleteSong, updateSong } from '../../features/songs/song.slice';
 import { Button } from '../../components/Button';
@@ -14,7 +13,7 @@ import Search from '../../components/Search';
 const SongsPage: React.FC = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = (data: SongPayload, id?: string) => {
+  const handleSubmit = (data: FormData, id?: string) => {
     if (id) {
       dispatch(updateSong({ id, data: data }));
     } else {

@@ -1,8 +1,7 @@
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
-import type { SongPayload } from '../../features/songs/song.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { favoriteSong, fetchSongs } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
@@ -12,7 +11,7 @@ import { Dot, Heart,  Pencil, Trash2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 interface Props {
-  onEdit: (song: SongPayload, id?: string) => void;
+  onEdit: (song: FormData, id?: string) => void;
   onDelete: (id: string) => void;
 }
 
