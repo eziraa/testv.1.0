@@ -31,4 +31,14 @@ UserSchema.methods.generateAuthToken = function (): {accessToken:string, refresh
     refreshToken
   };
 };
+
+ export const verifyRefreshToken = function (refreshToken: string) {
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || "defaultSecret");
+    return decoded;
+  } catch (error) {
+    console.error("Invalid refresh token:", error);
+    return null;
+  }
+};
 export default mongoose.model<IUser>("User", UserSchema);
