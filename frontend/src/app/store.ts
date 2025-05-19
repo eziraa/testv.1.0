@@ -5,6 +5,7 @@ import { artistReducer } from "../features/artists/artist.slice";
 import { albumReducer } from "../features/albums/album.slice";
 import { playlistReducer } from "../features/playlists/playlist.slice";
 import { authReducer } from "../features/auth/auth.slice";
+import { statReducer } from "../features/stats/stat.slice";
 import rootSaga from "./root.saga";
 import {
   useDispatch,
@@ -21,6 +22,7 @@ export const store = configureStore({
     albums: albumReducer,
     playlists: playlistReducer,
     auth: authReducer,
+    stats: statReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

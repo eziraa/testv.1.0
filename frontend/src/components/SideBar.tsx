@@ -17,8 +17,8 @@ const sideBarItems: SideBarItem[] = [
   { name: 'Albums', icon: <Music size={18} />, url: '/albums' },
   { name: 'Playlists', icon: <Music2 size={18} />, url: '/playlists' },
   {name: 'Favorites', icon: <HeartIcon size={18} />, url: '/favorites'},
-  { name: 'Settings', icon: <User size={18} />, url: '/settings' },
-  { name: 'Logout', icon: <User size={18} />, url: '/logout' },
+  { name: 'Settings', icon: <User size={18} />, url: '/' },
+  { name: 'Logout', icon: <User size={18} />, url: '/' },
 ];
 const SideBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
