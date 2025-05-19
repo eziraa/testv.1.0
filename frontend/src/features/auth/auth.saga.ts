@@ -67,9 +67,9 @@ function* logoutWorker() {
   }
 }
 
-function* getMeWorker(): Generator<any, void, any> {
+function* getMeWorker(action: {type: string,payload:  string}): Generator<any, void, any> {
   try {
-    const response = yield call(authAPI.getMe);
+    const response = yield call(authAPI.getMe, action?.payload || "");
     yield put({ type: AuthActionTypes.GET_ME_SUCCESS, payload: response.data });
   } catch (error) {
     if (error instanceof Error && error.message) {

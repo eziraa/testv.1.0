@@ -9,7 +9,7 @@ export const authAPI = {
   login: (data: LoginPayload) => axiosClient.post(`${API_BASE}/login`, data),
   logout: () => axiosClient.post(`${API_BASE}/logout`),
   refreshToken: () => axiosClient.post(`${API_BASE}/refreshToken`),
-  getMe: () => axiosClient.get(`${API_BASE}/me`),
+  getMe: (params?: string) => axiosClient.get(`${API_BASE}/me${params ? "?withFavorite=true" : ""}`),
 }
 
 

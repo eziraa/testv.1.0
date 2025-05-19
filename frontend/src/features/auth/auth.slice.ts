@@ -21,6 +21,7 @@ interface AuthState {
   },
   error: string | null;
   fetching: boolean;
+  fetchError : string | null;
   mutuated: boolean;
   logingIn: boolean;
   signingUp: boolean;
@@ -34,6 +35,7 @@ const initialState: AuthState = {
     accessToken: null,
     refreshToken: null,
   },
+  fetchError: null,
   error: null,
   fetching: false,
   mutuated: false,
@@ -125,22 +127,22 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.toastId = toast.error("Failed to sign out", {toastId: state.toastId});
     },
-    getMe: (state) => {
+    getMe: (state, _:PayloadAction<string | null>) => {
       state.fetching = true;
-      state.error = null;
+      state.fetchError = null;
       state.mutuated = false;
     },
     getMeSuccess: (state, action: PayloadAction<AuthState>) => {
       state.fetching = false;
       state.user = action.payload.user;
       state.authTokens = action.payload.authTokens
-      state.error = null;
+      state.fetchError = null;
       state.mutuated = true;
       
     },
     getMeFailure: (state, action: PayloadAction<string>) => {
       state.fetching = false;
-      state.error = action.payload;
+      state.fetchError = action.payload;
       toast.update(state.toastId, {
         render: action.payload || "Failed to fetch user",
         type: "error",
