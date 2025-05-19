@@ -80,9 +80,12 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, triggerContent, editingAlbum }) =
     }
   }, [mutuated])
 
+
   useEffect((() => {
-    dispatch(fetchArtists())
-  }), [dispatch])
+    if (openedDialogs.includes(dialogId)) {
+      dispatch(fetchArtists(""))
+    }
+  }), [openedDialogs])
 
   useEffect(() => {
 

@@ -63,7 +63,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                     }}
                   >
                     {
-                      <FavoriteIcon size={16} $favorited={user.favorites.includes(song._id)} />
+                      <FavoriteIcon size={16} $favorited={user.favorites.some(favoriteSong => favoriteSong._id ===song._id)} />
                     }
                   </OutlineDeleteButton>
                 )

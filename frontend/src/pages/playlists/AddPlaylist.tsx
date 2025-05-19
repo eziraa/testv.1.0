@@ -73,8 +73,10 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerConten
   }, [mutuated])
 
   useEffect((() => {
-    dispatch(fetchSongs())
-  }), [dispatch])
+    if (openedDialogs.includes(dialogId)) {
+      dispatch(fetchSongs(""))
+    }
+  }), [openedDialogs])
 
   useEffect(() => {
 

@@ -26,7 +26,6 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
   const { artists } = useAppSelector(state => state.artists)
   const dialogId = React.useMemo(() => `${editingSong ? "edit-song-" + editingSong._id : "add-song"}`, [editingSong]);
 
-
   const { mutuated, creating, updating, } = useAppSelector(state => state.songs)
 
   const {
@@ -81,8 +80,10 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
 
 
   useEffect(() => {
-    dispatch(fetchArtists())
-  }, [dispatch])
+    if (openedDialogs.includes(dialogId)) {
+      dispatch(fetchArtists(""))
+    }
+  }, [openedDialogs])
 
   useEffect(() => {
     if (openedDialogs.includes(dialogId)) {
