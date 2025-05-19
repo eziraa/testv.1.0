@@ -28,7 +28,7 @@ const artistSlice = createSlice({
   name: "artists",
   initialState,
   reducers: {
-    fetchArtists: (state) => {
+    fetchArtists: (state, _: PayloadAction<any>) => {
       state.fetching = true;
       state.error = null;
     },

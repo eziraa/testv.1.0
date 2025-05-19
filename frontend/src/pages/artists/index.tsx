@@ -7,13 +7,12 @@ import AddArtist from './AddArtist';
 import { createArtist, deleteArtist, updateArtist } from '../../features/artists/artist.slice';
 import { Button } from '../../components/Button';
 import { Plus } from 'lucide-react';
+import Search from '../../components/Search';
+import { flex, flexDirection, width } from 'styled-system';
 
 
 const ArtistsPage: React.FC = () => {
   const dispatch = useDispatch();
-
-
-
   const handleSubmit = (data: FormData, id?: string) => {
     if (id) {
       dispatch(updateArtist({ id, data: data }));
@@ -32,10 +31,13 @@ const ArtistsPage: React.FC = () => {
     <PageWrapper>
       <Header>
         <h1>🎵 Artists</h1>
+        <div style={{justifyItems: 'end' , display: 'flex',gap: "0.5rem"}}>
+        <Search/>
         <AddArtist
           onSubmit={handleSubmit}
           triggerContent={<Button><Plus size={18} /> Artist</Button>}
         />
+        </div>
       </Header>
 
       <ArtistList onEdit={handleSubmit} onDelete={handleDelete} />

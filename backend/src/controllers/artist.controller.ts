@@ -4,9 +4,21 @@ import { ArtistSchemaZod } from "../validators/artist.validators";
 import FileUploader from "../utils/FileUploader";
 class ArtistController {
   // Method: to get all artists
-  async getAllArtists(_: Request, res: Response): Promise<void> {
+  async getAllArtists(req: Request, res: Response): Promise<void> {
     try {
-      const artists = await Artist.find();
+      const { search } = req.query;
+  
+      const query: any = {};
+  
+      if (search) {
+        const regex = new RegExp(search as string, 'i');
+        query.$or = [
+          { name: { $regex: regex } },
+          { bio: { $regex: regex } },
+        ];
+      }
+  
+      const artists = await Artist.find(query);
       res.status(200).json(artists);
     } catch (err) {
       if (err instanceof Error && "errors" in err) {
@@ -14,11 +26,12 @@ class ArtistController {
           message: "Validation failed",
           errors: (err as any).errors,
         });
+      } else {
+        res.status(500).json({ message: "Internal Server error" });
       }
-      res.status(500).json({ message: "Internal Server error" });
     }
   }
-
+  
   // Method: to get a single artist by ID
   async getArtistById(req: Request, res: Response): Promise<void> {
     try {

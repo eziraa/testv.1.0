@@ -8,6 +8,7 @@ import LoadingPage from '../../components/LoadingPage';
 import AddArtist from './AddArtist';
 import DeleteDialog from '../../components/DeleteDialog';
 import { Pencil, Trash2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 interface Props {
   onEdit: (artist: FormData, id?: string) => void;
@@ -15,12 +16,13 @@ interface Props {
 }
 
 const ArtistList: React.FC<Props> = ({ onEdit, onDelete }) => {
+  const [searchParams] = useSearchParams()
   const dispatch = useAppDispatch();
   const { artists, fetching, deleting, mutuated, error } = useAppSelector((state) => state.artists);
 
   useEffect(() => {
-    dispatch(fetchArtists());
-  }, [dispatch]);
+    dispatch(fetchArtists(searchParams.toString()));
+  }, [searchParams]);
 
   if (fetching) return <LoadingPage />;
   if (error) return <MessageContainer>Error: {error}</MessageContainer>;

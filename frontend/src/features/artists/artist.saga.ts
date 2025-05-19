@@ -33,9 +33,9 @@ export enum ArtistActionTypes {
   FETCH_ARTIST_FAILURE = "artists/fetchArtistFailure",
 } 
 
-function* fetchArtistsWorker(): Generator<any, void, { data: any }> {
+function* fetchArtistsWorker(action: {type: string, payload?:string}): Generator<any, void, { data: any }> {
   try {
-    const response = yield call(artistAPI.fetchArtists);
+    const response = yield call(artistAPI.fetchArtists, action.payload);
     yield put(fetchArtistsSuccess(response.data));
   } catch (error: any) {
     yield put(fetchArtistsFailure(error.message));
