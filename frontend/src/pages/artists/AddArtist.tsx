@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorMessage, FormContainer, Input, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
 import type { Artist, ArtistPayload } from '../../features/artists/artist.types';
@@ -12,7 +12,8 @@ import { ButtonRow, DeleteButton } from '../../components/Button';
 
 
 interface Props {
-  onSubmit: (artist: ArtistPayload, id?: string) => void;
+
+  onSubmit: (artist: FormData, id?: string) => void;
   editingArtist?: Artist | null;
   triggerContent: React.ReactNode;
 }
@@ -21,6 +22,7 @@ const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist })
 
   const editMode = !!editingArtist;
   const { closeDialog } = useDialog()
+  const [profilePricture, setProfilePicture] = useState<File | null>(null)
   const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-" + editingArtist._id : "add-artist"}`, [editingArtist]);
 
   const { mutuated, creating, updating } = useAppSelector(state => state.artists)
@@ -41,7 +43,13 @@ const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist })
 
   const onDataSubmit = (data: ArtistFormData) => {
     try {
-      onSubmit(data, editingArtist?._id);
+      const formData = new FormData()
+      if (profilePricture)
+        formData.set('profilePicture', profilePricture)
+      formData.set('name', data.name);
+      data.bio && formData.append('bio', data.bio)
+
+      onSubmit(formData, editingArtist?._id);
     } catch (error) {
       if (error instanceof Error && error.message) {
         toast.error(error.message);
@@ -109,13 +117,20 @@ const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist })
         </ErrorMessage>
 
         <Input
-          placeholder="Profile Picture"
-          {...register('profilePicture')}
-          hasError={!!errors.profilePicture}
+          type='file'
+          accept='image/*'
+          onChange={e => {
+            const file = e.target.files?.[0]
+            if (file) {
+              setProfilePicture(file)
+            }
+          }}
         />
-        <ErrorMessage hasError={!!errors.profilePicture}>
-          {errors.profilePicture?.message}
-        </ErrorMessage>
+        {
+          (profilePricture || editingArtist?.profilePicture) && (
+            <img src={profilePricture ? URL.createObjectURL(profilePricture) : editingArtist?.profilePicture} alt="Cover Preview" style={{ width: '100px', height: '100px' }} />
+          )
+        }
         <ButtonRow>
           {editMode && isDirty && <DeleteButton
             onClick={() => {

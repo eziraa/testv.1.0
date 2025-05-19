@@ -58,7 +58,7 @@ const artistSlice = createSlice({
 
     },
 
-    createArtist: (state, _: PayloadAction<ArtistPayload>) => {
+    createArtist: (state, _: PayloadAction<FormData>) => {
       state.error = null;
       state.mutuated= false;
       state.creating = true;
@@ -94,7 +94,7 @@ const artistSlice = createSlice({
       toast.error("Failed to delete artist")
     },
 
-    updateArtist: (state, _: PayloadAction<{data: ArtistPayload, id:string}>) => {
+    updateArtist: (state, _: PayloadAction<{data: FormData, id:string}>) => {
       state.error = null;
       state.mutuated= false
       state.updating = true;
