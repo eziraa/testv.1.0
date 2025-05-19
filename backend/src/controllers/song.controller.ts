@@ -121,10 +121,12 @@ class SongController {
       } else {
         updatedFavorites = [songId];
       }
+
       await User.findByIdAndUpdate(userId, {
-        favorites: [songId]
+        favorites: [...updatedFavorites]
       })
 
+      
       res.status(200).json({message: "Song Favorited"})
     } catch (error) {
       if (error instanceof Error && "errors" in error) {

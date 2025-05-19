@@ -65,7 +65,8 @@ class AuthController {
         res.status(401).json({ message: "Unauthorized please login" });
         return;
       }
-      const user = await User.findById(userId);
+      const withFavorite = req.query.withFavorite === "true"
+      const user = await User.findById(userId).populate(withFavorite ? 'favorites' : "");
       if (!user) {
         res.status(404).json({ message: "User not found" });
       }
@@ -137,6 +138,8 @@ class AuthController {
       res.status(500).json({ message: "Internal Server Error", error });
     }
   }
+
+
 
   
 }

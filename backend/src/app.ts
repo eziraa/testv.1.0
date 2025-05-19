@@ -9,6 +9,7 @@ import playlistRoutes from './routes/playlist.routes';
 import authRoutes from './routes/auth.routes';
 import fileUpLoaderRoutes from './routes/fileuploader';
 import path from 'path';
+import { getDashboardStats } from './controllers/stat.conteroller';
 
 
 
@@ -30,6 +31,7 @@ app.use('/api/albums', albumRoutes);
 app.use('/api/artists', artistRoutes);
 app.use('/api/playlists', playlistRoutes);
 app.use('/api/fileuploader',fileUpLoaderRoutes);
+app.use('/api/stats', getDashboardStats)
 
 
 app.get('/', (req, res) => {
