@@ -11,7 +11,7 @@ router.post("/signup", authController.signUp);
 router.patch("/update-profile",AuthenticatedOnly, authController.updateUserProfile);
 router.get("/me",AuthenticatedOnly, authController.getMe);
 router.post("/logout",AuthenticatedOnly, authController.login);
-router.post("/refreshToken",AuthenticatedOnly, authController.refreshToken);
+router.post("/refreshToken", authController.refreshToken);
 
 
 export default router;
