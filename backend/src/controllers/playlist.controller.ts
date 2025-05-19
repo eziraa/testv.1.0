@@ -26,7 +26,7 @@ class PlaylistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        coverImageUrl = fileUploader.getFileUrl(req, req.file.filename);
+        coverImageUrl = fileUploader.getFileUrl(req, req.file.path);
       }
 
       // Parse songs from JSON string to array
@@ -94,7 +94,7 @@ class PlaylistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        coverImageUrl = fileUploader.getFileUrl(req, req.file.filename);
+        coverImageUrl = fileUploader.getFileUrl(req, req.file.path);
       }
 
       // Parse songs from JSON string to array

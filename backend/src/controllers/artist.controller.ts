@@ -60,7 +60,7 @@ class ArtistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        profilePictureUrl = fileUploader.getFileUrl(req, req.file.filename);
+        profilePictureUrl = fileUploader.getFileUrl(req, req.file.path);
       }
 
       // Parse songs from JSON string to array
@@ -103,7 +103,7 @@ class ArtistController {
       let profilePictureUrl: string | undefined;
       // If image was uploaded, get its URL
       if (req.file) {
-        profilePictureUrl = fileUploader.getFileUrl(req, req.file.filename);
+        profilePictureUrl = fileUploader.getFileUrl(req, req.file.path);
       }
       // Parse songs from JSON string to array
       if (!req.body.songs) {
