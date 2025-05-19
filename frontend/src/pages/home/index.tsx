@@ -1,5 +1,6 @@
 import React from "react"
 import styled from "styled-components"
+import DashboardStats from "../stats"
 
 const Container = styled.div`
   padding: 0 1rem 3rem;
@@ -109,18 +110,19 @@ const LandingPage: React.FC = () => {
                 <HeroSubtitle>Stream, curate, and vibe to your favorite songs anytime, anywhere.</HeroSubtitle>
                 <Button>Get Started</Button>
             </Hero>
+            <DashboardStats/>
 
             <FeatureGrid>
                 <Card>
-                    <CardTitle>🎧 Personal Playlists</CardTitle>
+                    <CardTitle> Personal Playlists</CardTitle>
                     <CardText>Create and customize playlists that match your mood and moments.</CardText>
                 </Card>
                 <Card>
-                    <CardTitle>🌎 Explore Artists</CardTitle>
+                    <CardTitle> Explore Artists</CardTitle>
                     <CardText>Discover new talent and follow your favorite artists with ease.</CardText>
                 </Card>
                 <Card>
-                    <CardTitle>⚡ Fast & Offline</CardTitle>
+                    <CardTitle> Fast & Offline</CardTitle>
                     <CardText>Enjoy lightning-fast streaming and offline playback features.</CardText>
                 </Card>
             </FeatureGrid>
@@ -128,23 +130,6 @@ const LandingPage: React.FC = () => {
             <SectionTitle>Premium Services at Your Fingertips</SectionTitle>
             <SectionSubtitle>Enjoying top-tier services with ease and convenience.</SectionSubtitle>
 
-            <Grid>
-                <ServiceCard>
-                    <ServiceIcon>📊</ServiceIcon>
-                    <CardTitle>Listening Analytics</CardTitle>
-                    <CardText>Track your most-played songs, favorite genres, and artist stats.</CardText>
-                </ServiceCard>
-                <ServiceCard>
-                    <ServiceIcon>📢</ServiceIcon>
-                    <CardTitle>Promotion Tools</CardTitle>
-                    <CardText>Artists can promote their songs directly to curated playlists and fans.</CardText>
-                </ServiceCard>
-                <ServiceCard>
-                    <ServiceIcon>🛒</ServiceIcon>
-                    <CardTitle>Song Marketplace</CardTitle>
-                    <CardText>Buy and sell exclusive tracks and beats with the community.</CardText>
-                </ServiceCard>
-            </Grid>
         </Container>
     )
 }

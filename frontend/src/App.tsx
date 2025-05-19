@@ -15,11 +15,13 @@ import { ToastContainer } from 'react-toastify';
 import SignUpPage from './pages/auth/signup';
 import LoginPage from './pages/auth/login';
 import HomePage from './pages/home';
-import { useAppDispatch } from './app/store';
+import { useAppDispatch, useAppSelector } from './app/store';
 import { getMe } from './features/auth/auth.slice';
+import FavoriteSongsPage from './pages/favorites';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user)
   const [isDark, setIsDark] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark';
@@ -30,9 +32,10 @@ const App: React.FC = () => {
   }, [isDark]);
 
   useEffect(() => {
+    if(user) return;
     const token = localStorage.getItem('accessToken');
     if (token) {
-      dispatch(getMe());
+      dispatch(getMe(""));
     }
 
   }, [dispatch]);
@@ -67,6 +70,7 @@ const App: React.FC = () => {
             <Route path="/artists" element={<ArtistsPage />} />
             <Route path="/albums" element={<AlbumsPage />} />
             <Route path="/playlists" element={<PlaylistPage />} />
+            <Route path="/favorites" element={<FavoriteSongsPage />} />
           </Route>
 
           {/* Outside layout for auth pages */}
