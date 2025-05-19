@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Artist from "../models/Artist";
 import { ArtistSchemaZod } from "../validators/artist.validators";
 import FileUploader from "../utils/FileUploader";
+const fileUploader = new FileUploader();
 class ArtistController {
   // Method: to get all artists
   async getAllArtists(req: Request, res: Response): Promise<void> {
@@ -59,7 +60,7 @@ class ArtistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        profilePictureUrl = FileUploader.getFileUrl(req, req.file.filename);
+        profilePictureUrl = fileUploader.getFileUrl(req, req.file.filename);
       }
 
       // Parse songs from JSON string to array
@@ -102,7 +103,7 @@ class ArtistController {
       let profilePictureUrl: string | undefined;
       // If image was uploaded, get its URL
       if (req.file) {
-        profilePictureUrl = FileUploader.getFileUrl(req, req.file.filename);
+        profilePictureUrl = fileUploader.getFileUrl(req, req.file.filename);
       }
       // Parse songs from JSON string to array
       if (!req.body.songs) {
@@ -119,7 +120,7 @@ class ArtistController {
       if (!profilePictureUrl) {
         const album = await Artist.findById(req.params.id);
         if (album?.profilePicture)
-          FileUploader.deleteFile(album.profilePicture);
+          fileUploader.deleteFile(album.profilePicture);
       }
       const updatedArtist = await Artist.findByIdAndUpdate(id, parsedData, {
         new: true,

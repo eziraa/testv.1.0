@@ -3,7 +3,7 @@ import { Router } from "express";
 import artistController from "../controllers/artist.controller";
 import FileUploader from "../utils/FileUploader";
 const router = Router();
-const uploader = FileUploader.getUploader();
+const uploader = new FileUploader("profilePictures").getUploader();
 
 // Artist related endpoints
 router.get("/", artistController.getAllArtists);

@@ -1,8 +1,8 @@
 import express from 'express';
-import fileUploader from '../utils/FileUploader'; // adjust path
+import FileUploader from '../utils/FileUploader'; // adjust path
 const router = express.Router();
 
-const upload = fileUploader.getUploader();
+const upload = new FileUploader().getUploader();
 
 router.post('/upload', upload.single('file'), (req, res): void => {
   if (!req.file) {
@@ -10,7 +10,7 @@ router.post('/upload', upload.single('file'), (req, res): void => {
     return;
   }
 
-  const fileUrl = fileUploader.getFileUrl(req, req.file.filename);
+  const fileUrl =  new FileUploader().getFileUrl(req, req.file.filename);
 
   res.status(200).json({
     message: 'File uploaded successfully',

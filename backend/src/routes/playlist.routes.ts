@@ -3,7 +3,7 @@ import { Router } from "express";
 import playlistController from "../controllers/playlist.controller";
 import FileUploader from "../utils/FileUploader";
 
-const uploader = FileUploader.getUploader();
+const uploader = new FileUploader('playlistCoverImages').getUploader();
 const router = Router();
 
 // Playlist related endpoints

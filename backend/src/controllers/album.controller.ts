@@ -4,7 +4,8 @@ import {
   AlbumSchemaZod,
   AlbumUpdateSchemaZod,
 } from "../validators/album.validator";
-import fileUploader from "../utils/FileUploader";
+import FileUploader from "../utils/FileUploader";
+const fileUploader = new FileUploader()
 class AlbumController {
   // METHOD: To get all albums
   async getAllAlbums(_: Request, res: Response) {

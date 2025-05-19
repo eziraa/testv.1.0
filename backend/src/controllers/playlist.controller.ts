@@ -7,6 +7,7 @@ import {
 } from "../validators/playlist.validator";
 import FileUploader from "../utils/FileUploader";
 
+const fileUploader = new FileUploader();
 class PlaylistController {
   // METHOD: to get all playlists
   async getAllPlaylists(req: Request, res: Response) {
@@ -25,7 +26,7 @@ class PlaylistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        coverImageUrl = FileUploader.getFileUrl(req, req.file.filename);
+        coverImageUrl = fileUploader.getFileUrl(req, req.file.filename);
       }
 
       // Parse songs from JSON string to array
@@ -93,7 +94,7 @@ class PlaylistController {
 
       // If image was uploaded, get its URL
       if (req.file) {
-        coverImageUrl = FileUploader.getFileUrl(req, req.file.filename);
+        coverImageUrl = fileUploader.getFileUrl(req, req.file.filename);
       }
 
       // Parse songs from JSON string to array
@@ -113,7 +114,7 @@ class PlaylistController {
         const playlist = await Playlist.findById(id);
         if (!playlist) res.status(404).json({ message: "Playlist not found" });
         else if (playlist.coverImage) {
-          FileUploader.deleteFile(playlist.coverImage);
+          fileUploader.deleteFile(playlist.coverImage);
         }
       }
       const updatedPlaylist = await Playlist.findByIdAndUpdate(

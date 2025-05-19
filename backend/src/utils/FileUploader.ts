@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-const VALID_MIME_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/icon'];
+const VALID_MIME_TYPES = ['image/', 'audio/'];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export class FileUploader {
@@ -19,10 +19,15 @@ export class FileUploader {
   }
 
   public getUploader(): Multer {
+    console.log("Upload Folder",this.uploadFolder)
     return multer({
       storage: multer.diskStorage({
         destination: (_req, _file, cb) => cb(null, this.uploadFolder),
         filename: (req, file, cb) => {
+          console.log("Before")
+          console.log("File Name: ", file.originalname);
+          console.log("File Path: ", file.path);
+          console.log("File URL: ", this.getFileUrl(req, file.filename));
           const ext = path.extname(file.originalname);
           const baseName = req.body?.fileName?.trim();
 
@@ -32,10 +37,16 @@ export class FileUploader {
             : `${uuidv4()}${ext}`;
 
           cb(null, safeName);
+
+          console.log("After")
+          console.log("File Name: ", file.originalname);
+          console.log("File Path: ", file.path);
+          console.log("File URL: ", this.getFileUrl(req, file.filename));
         },
       }),
       fileFilter: (_req, file, cb) => {
-        if (!VALID_MIME_TYPES.includes(file.mimetype)) {
+        if (!VALID_MIME_TYPES.some(valid_mime_type => file.mimetype.startsWith(valid_mime_type))) {
+          console.log(`Invalid file type: ${file.mimetype}`);
           cb(null, false);
         } else {
           cb(null, true);
@@ -59,4 +70,4 @@ export class FileUploader {
   }
 }
 
-export default new FileUploader();
+export default  FileUploader;

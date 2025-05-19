@@ -1,9 +1,9 @@
 import { Router } from "express";
 import albumController from "../controllers/album.controller";
-import fileUpLoader from "../utils/FileUploader";
+import FileUpLoader from "../utils/FileUploader";
 
 const router = Router();
-const uploader = fileUpLoader.getUploader();
+const uploader = new FileUpLoader("albumCoverImages").getUploader();
 
 router.get("/", albumController.getAllAlbums);
 router.post(
