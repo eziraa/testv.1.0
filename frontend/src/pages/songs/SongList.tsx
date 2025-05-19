@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
-import { ButtonRow } from '../../components/Button';
+import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import type { SongPayload } from '../../features/songs/song.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { fetchSongs } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddSong from './AddSong';
 import DeleteDialog from '../../components/DeleteDialog';
+import { Dot, Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (song: SongPayload, id?: string) => void;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
+  const theme = useTheme()
   const dispatch = useAppDispatch();
   const { songs, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
 
@@ -28,7 +30,6 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   return (
     <Wrapper>
-      <Title>🎵 Song Library</Title>
       <ListContainer>
         {songs?.map((song) => (
           <StyledCard key={song._id}>
@@ -42,8 +43,10 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
               </ArtworkPlaceholder>
               <SongDetails>
                 <SongTitle>{song.title}</SongTitle>
-                <SongSubInfo>{song.artist?.name} • {song.album}</SongSubInfo>
-                <GenreTag>{song.genre || <i>No genre</i>}</GenreTag>
+                <SongSubInfo>{song.artist?.name} <Dot style={{
+                  color: theme.acccent
+                }}/> {song.album}</SongSubInfo>
+                <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
             </TopSection>
 
@@ -54,11 +57,19 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                   artist: song.artist?._id,
                 }}
                 onSubmit={onEdit}
-                iconOnly
+                triggerContent={
+                  <OutlineButton>
+                    <Pencil size={16} />
+                  </OutlineButton>
+                }
               />
               <DeleteDialog
                 dialogId={`delete-artist-${song._id}`}
-                triggerText=""
+                triggerContent={
+                  <OutlineDeleteButton>
+                    <Trash2 size={16} />
+                  </OutlineDeleteButton>
+                }
                 itemName={"Artist"}
                 deleteStatus={{
                   deleted: mutuated,
@@ -157,7 +168,7 @@ const SongSubInfo = styled.p`
   margin: 0.25rem 0;
 `;
 
-const GenreTag = styled.span`
+export const MutedElement = styled.span`
   display: inline-block;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
