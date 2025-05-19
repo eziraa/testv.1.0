@@ -3,11 +3,11 @@ import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import { useAppDispatch, useAppSelector } from '../../app/store';
-import { favoriteSong, fetchSongs } from '../../features/songs/song.slice';
+import { favoriteSong, fetchSongs, fetchSongSuccess } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddSong from './AddSong';
 import DeleteDialog from '../../components/DeleteDialog';
-import { Dot, Heart,  Pencil, Trash2 } from 'lucide-react';
+import { Dot, Heart, Pencil, Play, Trash2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 interface Props {
@@ -20,7 +20,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const theme = useTheme()
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user)
-  const { songs, fetchError, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
+  const { songs, song: currentSong, fetchError, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
 
   useEffect(() => {
     dispatch(fetchSongs(searchParams.toString()));
@@ -55,17 +55,26 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
             <ActionRow>
 
               {
-                !!user && (
-                  <OutlineDeleteButton
+                currentSong?._id !== song._id && (
+                  <OutlineButton
                     onClick={() => {
-                      dispatch(favoriteSong(song._id))
+                      dispatch(fetchSongSuccess(song))
                     }}
                   >
-                    {
-                      <FavoriteIcon size={16} $favorited={user.favorites.some(favoriteSong => favoriteSong._id ===song._id)} />
-                    }
-                  </OutlineDeleteButton>
+                    {currentSong?._id !== song._id && <Play size={16} />}
+                  </OutlineButton>
                 )
+              }
+              {
+               !!user && <OutlineDeleteButton
+                  onClick={() => {
+                    dispatch(favoriteSong(song._id))
+                  }}
+                >
+                  {
+                    <FavoriteIcon size={16} $favorited={user.favorites.some(favoriteSong => favoriteSong._id === song._id)} />
+                  }
+                </OutlineDeleteButton>
               }
               <AddSong
                 editingSong={{

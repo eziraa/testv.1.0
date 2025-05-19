@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import React from "react";
 import ProfileDropdown from "./ProfileDropDown";
 import { User } from "lucide-react";
-import { CloseButton } from "./Button";
+import MiniPlayer from "./SongPlayer";
 
 interface Props {
   toggleTheme: () => void;
@@ -32,6 +32,7 @@ const MainLayout = ({ isDark, toggleTheme }: Props) => {
     <Layout className=''>
       <Header>
         <AppTitle>🎵 Resonix</AppTitle>
+        <MiniPlayer/>
         <RightSection>
           <ThemeToggle isDark={isDark} toggle={toggleTheme} />
           <ProfileWrapper>
