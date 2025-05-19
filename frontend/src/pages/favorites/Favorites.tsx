@@ -1,0 +1,223 @@
+import React, { useEffect } from 'react';
+import styled, { useTheme } from 'styled-components';
+import { Card } from '../../components/Card';
+import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
+import type { Song, SongPayload } from '../../features/songs/song.types';
+import { useAppDispatch, useAppSelector } from '../../app/store';
+import { favoriteSong } from '../../features/songs/song.slice';
+import LoadingPage from '../../components/LoadingPage';
+import DeleteDialog from '../../components/DeleteDialog';
+import { Dot, Heart, HeartIcon, Pencil, Trash2 } from 'lucide-react';
+import AddSong from '../songs/AddSong';
+import { getMe } from '../../features/auth/auth.slice';
+
+interface Props {
+  onEdit: (song: SongPayload, id?: string) => void;
+  onDelete: (id: string) => void;
+}
+
+const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
+  const theme = useTheme()
+  const dispatch = useAppDispatch();
+  const { fetchError, user, fetching } = useAppSelector(state => state.auth)
+  const { error, deleting, mutuated } = useAppSelector(state => state.songs)
+
+
+  useEffect(() => {
+    dispatch(getMe('withFavorites'));
+  }, [dispatch]);
+
+  if (fetching) return <LoadingPage />;
+  if (fetchError) return <ErrorMessage>Error: {fetchError}</ErrorMessage>;
+  if (!user?.favorites || user.favorites.length === 0) return <EmptyMessage>No songs found.</EmptyMessage>;
+  const songs = user.favorites as unknown as Song[]
+  return (
+    <Wrapper>
+      <ListContainer>
+        {songs?.map((song) => (
+          <StyledCard key={song._id}>
+            <TopSection>
+              <ArtworkPlaceholder>
+                {song.genre ? (
+                  <img src={song.genre} alt={`${song.title} cover`} />
+                ) : (
+                  <span>🎶</span>
+                )}
+              </ArtworkPlaceholder>
+              <SongDetails>
+                <SongTitle>{song.title}</SongTitle><Dot style={{
+                  color: theme.acccent
+                }} />
+                <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
+              </SongDetails>
+            </TopSection>
+
+            <ActionRow>
+
+              {
+                !!user && (
+                  <OutlineDeleteButton
+                    onClick={() => {
+                      dispatch(favoriteSong(song._id))
+                    }}
+                  >
+                    {
+                      user.favorites.includes(song._id)
+                        ?
+                        <HeartIcon size={20} />
+                        :
+                        <Heart size={20} />
+                    }
+                  </OutlineDeleteButton>
+                )
+              }
+              <AddSong
+                editingSong={{
+                  ...song,
+                  artist: song.artist,
+                }}
+                onSubmit={onEdit}
+                triggerContent={
+                  <OutlineButton>
+                    <Pencil size={16} />
+                  </OutlineButton>
+                }
+              />
+              <DeleteDialog
+                dialogId={`delete-artist-${song._id}`}
+                triggerContent={
+                  <OutlineDeleteButton>
+                    <Trash2 size={16} />
+                  </OutlineDeleteButton>
+                }
+                itemName={"Artist"}
+                deleteStatus={{
+                  deleted: mutuated,
+                  error: error,
+                  deleting: deleting,
+                }}
+                onDelete={() => {
+                  onDelete(song._id);
+                }}
+              />
+            </ActionRow>
+          </StyledCard>
+        ))}
+      </ListContainer>
+    </Wrapper>
+  );
+};
+
+export default FavoriteSongList;
+
+// Styled Components
+
+const Wrapper = styled.div`
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 80%;
+`;
+
+
+
+const ListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+`;
+
+const StyledCard = styled(Card)`
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background-color: ${({ theme }) => theme.cardBackground};
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+`;
+
+const TopSection = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const ArtworkPlaceholder = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 0.75rem;
+  background-color: ${({ theme }) => theme.mutedBackground};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const SongDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const SongTitle = styled.h3`
+  font-size: 1.25rem;
+  margin: 0;
+  color: ${({ theme }) => theme.textPrimary};
+`;
+
+const SongSubInfo = styled.p`
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.textSecondary};
+  margin: 0.25rem 0;
+`;
+
+export const MutedElement = styled.span`
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background-color: ${({ theme }) => theme.mutedBackground};
+  color: ${({ theme }) => theme.textMuted};
+  border-radius: 0.5rem;
+  width: fit-content;
+  margin: auto 0.2rem;
+  margin-top: 0.25rem;
+
+  &:hover{
+    background-color: ${({ theme }) => theme.acccent};
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+`;
+
+const ActionRow = styled(ButtonRow)`
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+`;
+
+const ErrorMessage = styled.div`
+  color: ${({ theme }) => theme.errorColor};
+  text-align: center;
+  margin-top: 2rem;
+`;
+
+const EmptyMessage = styled.div`
+  color: ${({ theme }) => theme.textSecondary};
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+`;
