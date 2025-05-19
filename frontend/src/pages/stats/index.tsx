@@ -217,7 +217,7 @@ const StatCard = styled.div`
 const IconWrapper = styled.div`
   font-size: 2rem;
   margin-right: 1rem;
-  color: ${({ theme }) => theme.acccent};
+  color: ${({ theme }) => theme.accent};
 `;
 
 const Content = styled.div`

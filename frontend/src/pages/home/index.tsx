@@ -10,7 +10,7 @@ const Container = styled.div`
 `
 
 const Button = styled.button`
-  background: ${({ theme }) => theme.acccent};
+  background: ${({ theme }) => theme.accent};
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -23,7 +23,7 @@ const Button = styled.button`
 `
 
 const Hero = styled.section`
-  background: linear-gradient(to right, ${({ theme }) => theme.acccent}, ${({ theme }) => theme.secondary});
+  background: linear-gradient(to right, ${({ theme }) => theme.accent}, ${({ theme }) => theme.secondary});
   color: white;
   padding: 5rem 2rem;
   text-align: center;

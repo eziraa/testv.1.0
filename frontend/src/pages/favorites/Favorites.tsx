@@ -46,7 +46,7 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
               </ArtworkPlaceholder>
               <SongDetails>
                 <SongTitle>{song.title}</SongTitle><Dot style={{
-                  color: theme.acccent
+                  color: theme.accent
                 }} />
                 <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
@@ -195,7 +195,7 @@ export const MutedElement = styled.span`
   margin-top: 0.25rem;
 
   &:hover{
-    background-color: ${({ theme }) => theme.acccent};
+    background-color: ${({ theme }) => theme.accent};
     color: white;
     cursor: pointer;
     transition: all 0.3s;

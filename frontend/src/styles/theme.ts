@@ -1,6 +1,6 @@
 const defaultTheme = {
   // Button colors
-  acccent: "#007bff",
+  accent: "#007bff",
   danger: "#ff5c5c",
 
   buttonEdit: "#007bff",
@@ -28,6 +28,8 @@ const defaultTheme = {
   // Form colors
   errorColor: "#e2301d",
   textDanger: "#d32f2f",
+
+
 };
 export const lightTheme = {
   ...defaultTheme,
@@ -158,7 +160,7 @@ export const darkTheme = {
   mutedTextSecondary: "#a0a0a0",
   mutedHighlight: "#4b6584",
   mutedErrorColor: "#e57373",
-  mutedButtonBackground: "#3b3b3b",
+  mutedButtonBackground: "#3b3b49",
   mutedButtonHover: "#505050",
 };
 
