@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type AlbumPayload } from "./album.types";
 import { toast } from "react-toastify";
 import type { Artist } from "../artists/artist.types";
+import type { Song } from "../songs/song.types";
 
 interface Album {
   _id: string;
@@ -9,7 +9,7 @@ interface Album {
   artist?: Artist;
   releaseDate?: string;
   coverImage?: string;
-  songs?: string[];
+  songs?: Song[];
   genre?: string;
   createdAt: string;
   updatedAt: string;
@@ -71,7 +71,7 @@ const albumSlice = createSlice({
       state.fetching = false;
     },
 
-    createAlbum: (state, _: PayloadAction<AlbumPayload>) => {
+    createAlbum: (state, _: PayloadAction<FormData>) => {
       state.error = null;
       state.mutuated = false;
       state.creating = true;
@@ -109,7 +109,7 @@ const albumSlice = createSlice({
 
     updateAlbum: (
       state,
-      _: PayloadAction<{ data: AlbumPayload; id: string }>
+      _: PayloadAction<{ data: FormData; id: string }>
     ) => {
       state.error = null;
       state.mutuated = false;

@@ -18,15 +18,31 @@ const api = axios.create({ baseURL });
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(Token.ACCESS_TOKEN);
   if (token) {
+    config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
 
   const csrfToken = getCSRFToken();
   if (csrfToken) {
+    config.headers = config.headers || {};
     config.headers["X-CSRFToken"] = csrfToken;
   }
 
-  config.headers["Content-Type"] = "application/json";
+  // Only set Content-Type if NOT sending FormData
+  // When sending FormData, let browser set Content-Type with boundary automatically
+  if (
+    config.data &&
+    !(config.data instanceof FormData)
+  ) {
+    config.headers = config.headers || {};
+    config.headers["Content-Type"] = "application/json";
+  } else {
+    // Remove Content-Type header so browser can add correct multipart/form-data boundary
+    if (config.headers && config.headers["Content-Type"]) {
+      delete config.headers["Content-Type"];
+    }
+  }
+
   return config;
 });
 

@@ -10,21 +10,24 @@ import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
 import { fetchArtists } from '../../features/artists/artist.slice';
 import { resetMutation } from '../../features/albums/album.slice';
-import { ButtonRow,  DeleteButton } from '../../components/Button';
+import { ButtonRow, DeleteButton } from '../../components/Button';
+import { fileUploaderAPI } from '../../features/auth/fileuploader.api';
+import { getDateForInput } from '../../utils/date';
 
 
 interface Props {
-  onSubmit: (album: AlbumPayload, id?: string) => void;
+  onSubmit: (album: FormData, id?: string) => void;
   editingAlbum?: Album | null;
   triggerContent?: React.ReactNode;
 }
 
-const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) => {
+const AddAlbum: React.FC<Props> = ({ onSubmit, triggerContent, editingAlbum }) => {
 
   const editMode = !!editingAlbum;
   const dispatch = useAppDispatch()
   const { closeDialog, openedDialogs } = useDialog()
   const { artists } = useAppSelector(state => state.artists)
+  const [coverImage, setCoverImage] = React.useState<File | null>(null);
   const dialogId = React.useMemo(() => `${editingAlbum ? "edit-album-" + editingAlbum._id : "add-album"}`, [editingAlbum]);
 
   const { mutuated, creating, updating } = useAppSelector(state => state.albums)
@@ -46,9 +49,20 @@ const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) =>
     }
   });
 
-  const onDataSubmit = (data: AlbumFormData) => {
+  const onDataSubmit = async (data: AlbumFormData) => {
     try {
-      onSubmit(data, editingAlbum?._id);
+      const formData = new FormData();
+      if (coverImage) {
+        console.log(coverImage)
+        formData.append('coverImage', coverImage);
+      }
+      formData.append('title', data.title);
+      formData.append('artist', data.artist);
+      data.genre && formData.append('genre', data.genre);
+      formData.append('releaseDate', data.releaseDate);
+      formData.append('songs', JSON.stringify(data.songs));
+
+      onSubmit(formData, editingAlbum?._id);
     } catch (error) {
       if (error instanceof Error && error.message) {
         toast.error(error.message);
@@ -77,7 +91,7 @@ const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) =>
       title: editingAlbum?.title,
       artist: editingAlbum?.artist,
       genre: editingAlbum?.genre,
-      releaseDate: editingAlbum?.releaseDate,
+      releaseDate: getDateForInput(editingAlbum?.releaseDate),
       songs: editingAlbum?.songs,
       coverImage: editingAlbum?.coverImage
     });
@@ -98,7 +112,7 @@ const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) =>
     <Dialog
       dialogId={dialogId}
       triggerContent={triggerContent}
-      >
+    >
       <FormContainer
         onSubmit={handleSubmit(onDataSubmit)}>
         <FormHeader>
@@ -152,15 +166,18 @@ const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) =>
           {errors.releaseDate?.message}
         </ErrorMessage>
         <Input
-          placeholder="Cover Image URL"
-          id="coverImage"
-          type="url"
-          {...register('coverImage')}
-          hasError={!!errors.coverImage}
+          placeholder="Cover Image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setCoverImage(file);
+            }
+          }}
         />
-        <ErrorMessage hasError={!!errors.coverImage}>
-          {errors.coverImage?.message}
-        </ErrorMessage>
+        {(coverImage || editingAlbum?.coverImage) && <img src={coverImage ? URL.createObjectURL(coverImage) : editingAlbum?.coverImage} alt="Cover Preview" style={{ width: '100px', height: '100px' }} />}
+
         <ButtonRow>
           {editMode && isDirty && <DeleteButton
             onClick={() => {
