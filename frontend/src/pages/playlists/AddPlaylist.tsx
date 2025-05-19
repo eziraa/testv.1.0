@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorMessage, FormContainer, Input, Select, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
-import type { Playlist, PlaylistPayload } from '../../features/playlists/playlist.types';
+import type { Playlist } from '../../features/playlists/playlist.types';
 import { useForm } from 'react-hook-form';
 import { playlistSchema, type PlaylistFormData } from '../../validators/playlist.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,7 @@ import { resetMutation } from '../../features/playlists/playlist.slice';
 
 
 interface Props {
-  onSubmit: (playlist: PlaylistPayload, id?: string) => void;
+  onSubmit: (playlist: FormData, id?: string) => void;
   editingPlaylist?: Playlist | null;
   triggerContent: React.ReactNode;
 }
@@ -23,6 +23,7 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerConten
   const editMode = !!editingPlaylist;
   const user = useAppSelector(state => state.auth.user)
   const dispatch = useAppDispatch()
+  const [coverImage, setCoverImage] = useState<File | null>(null)
   const { closeDialog, openedDialogs } = useDialog()
   const { songs } = useAppSelector(state => state.songs)
   const dialogId = React.useMemo(() => `${editingPlaylist ? "edit-playlist-" + editingPlaylist._id : "add-playlist"}`, [editingPlaylist]);
@@ -45,10 +46,14 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerConten
 
   const onDataSubmit = (data: PlaylistFormData) => {
     try {
-      onSubmit({
-        ...data,
-        songs: data.songs?.filter((song) => !!song),
-      }, editingPlaylist?._id);
+      const formData = new FormData();
+      if (coverImage) {
+        formData.append("coverImage", coverImage)
+      }
+        formData.append('name', data.name)
+        formData.append('songs', JSON.stringify(data.songs?.filter(song => !!song)))
+        formData.append('user', user?._id || "")
+      onSubmit(formData, editingPlaylist?._id);
     } catch (error) {
       if (error instanceof Error && error.message) {
         toast.error(error.message);
@@ -132,6 +137,18 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerConten
         <ErrorMessage hasError={!!errors.songs}>
           {errors.songs?.message}
         </ErrorMessage>
+        <Input
+          placeholder="Cover Image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setCoverImage(file);
+            }
+          }}
+        />
+        {(coverImage || editingPlaylist?.coverImage) && <img src={coverImage ? URL.createObjectURL(coverImage) : editingPlaylist?.coverImage} alt="Cover Preview" style={{ width: '100px', height: '100px' }} />}
 
         {
           errors && Object.keys(errors).length > 0 && (

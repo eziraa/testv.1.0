@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import AlbumList from './AlbumList';
-import type { AlbumPayload } from '../../features/albums/album.types';
 import AddAlbum from './AddAlbum';
 import { createAlbum, deleteAlbum, updateAlbum } from '../../features/albums/album.slice';
 import { Button } from '../../components/Button';
@@ -13,7 +12,7 @@ import { Plus } from 'lucide-react';
 const AlbumsPage: React.FC = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = (data: AlbumPayload, id?: string) => {
+  const handleSubmit = (data: FormData, id?: string) => {
     if (id) {
       dispatch(updateAlbum({ id, data: data }));
     } else {

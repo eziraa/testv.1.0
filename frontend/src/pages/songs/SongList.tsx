@@ -4,11 +4,11 @@ import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import type { SongPayload } from '../../features/songs/song.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
-import { fetchSongs } from '../../features/songs/song.slice';
+import { favoriteSong, fetchSongs } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddSong from './AddSong';
 import DeleteDialog from '../../components/DeleteDialog';
-import { Dot, Pencil, Trash2 } from 'lucide-react';
+import { Dot, Heart, HeartIcon, Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (song: SongPayload, id?: string) => void;
@@ -18,14 +18,15 @@ interface Props {
 const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const theme = useTheme()
   const dispatch = useAppDispatch();
-  const { songs, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
+  const user = useAppSelector(state => state.auth.user)
+  const { songs, fetchError,mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
 
   useEffect(() => {
     dispatch(fetchSongs());
   }, []);
 
   if (fetching) return <LoadingPage />;
-  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
+  if (fetchError) return <ErrorMessage>Error: {fetchError}</ErrorMessage>;
   if (!songs || songs.length === 0) return <EmptyMessage>No songs found.</EmptyMessage>;
 
   return (
@@ -45,12 +46,30 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                 <SongTitle>{song.title}</SongTitle>
                 <SongSubInfo>{song.artist?.name} <Dot style={{
                   color: theme.acccent
-                }}/> {song.album}</SongSubInfo>
+                }} /> {song.album}</SongSubInfo>
                 <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
             </TopSection>
 
             <ActionRow>
+
+              {
+                !!user && (
+                  <OutlineDeleteButton
+                    onClick={() => {
+                      dispatch(favoriteSong(song._id))
+                    }}
+                  >
+                    {
+                      user.favorites.includes(song._id)
+                        ?
+                        <HeartIcon size={20} />
+                        :
+                        <Heart size={20} />
+                    }
+                  </OutlineDeleteButton>
+                )
+              }
               <AddSong
                 editingSong={{
                   ...song,
@@ -175,8 +194,16 @@ export const MutedElement = styled.span`
   background-color: ${({ theme }) => theme.mutedBackground};
   color: ${({ theme }) => theme.textMuted};
   border-radius: 0.5rem;
-  margin-top: 0.25rem;
   width: fit-content;
+  margin: auto 0.2rem;
+  margin-top: 0.25rem;
+
+  &:hover{
+    background-color: ${({ theme }) => theme.acccent};
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
 `;
 
 const ActionRow = styled(ButtonRow)`

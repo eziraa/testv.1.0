@@ -1,34 +1,37 @@
-import { Request, Response } from 'express';
-import Song from '../models/Song';
-import { SongSchemaZod, SongUpdateSchemaZod } from '../validators/song.validator';
+import { Request, Response } from "express";
+import Song from "../models/Song";
+import {
+  SongSchemaZod,
+  SongUpdateSchemaZod,
+} from "../validators/song.validator";
+import User from "../models/User";
+import mongoose from "mongoose";
 
 // SONG CONTROLLER CLASS: to handle song-related requests
 class SongController {
-
   // METHOD: to get all songs
   async getAllSongs(_: Request, res: Response) {
-    const songs = await Song.find().populate('artist').populate('album');
+    const songs = await Song.find().populate("artist").populate("album");
     res.json(songs);
   }
 
   // METHOD: to create a new song
   createSong = async (req: Request, res: Response): Promise<void> => {
     try {
-
-      const parsed = SongSchemaZod.parse(req.body); 
+      const parsed = SongSchemaZod.parse(req.body);
       const song = new Song(parsed);
       await song.save();
 
       res.status(201).json(song);
     } catch (err) {
-      if (err instanceof Error && 'errors' in err) {
+      if (err instanceof Error && "errors" in err) {
         res.status(400).json({
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: (err as any).errors,
         });
       }
 
-      res.status(500).json({ message: 'Internal Server error' });
+      res.status(500).json({ message: "Internal Server error" });
     }
   };
 
@@ -39,18 +42,18 @@ class SongController {
 
       // CHECK: if song exists
       if (!song) {
-        res.status(404).json({ message: 'Song not found' });
+        res.status(404).json({ message: "Song not found" });
       }
       res.json(song);
     } catch (err) {
-      if (err instanceof Error && 'errors' in err) {
+      if (err instanceof Error && "errors" in err) {
         res.status(400).json({
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: (err as any).errors,
         });
       }
-      
-      res.status(500).json({ message: 'Internal Server error' });
+
+      res.status(500).json({ message: "Internal Server error" });
     }
   }
 
@@ -58,23 +61,25 @@ class SongController {
   async updateSong(req: Request, res: Response): Promise<void> {
     try {
       const parsed = SongUpdateSchemaZod.parse(req.body);
-      const song = await Song.findByIdAndUpdate(req.params.id, parsed, { new: true });
+      const song = await Song.findByIdAndUpdate(req.params.id, parsed, {
+        new: true,
+      });
 
-    // CHECK: if song exists
+      // CHECK: if song exists
       if (!song) {
-        res.status(404).json({ message: 'Song not found' });
+        res.status(404).json({ message: "Song not found" });
       }
 
       res.json(song);
     } catch (err) {
-      if (err instanceof Error && 'errors' in err) {
+      if (err instanceof Error && "errors" in err) {
         res.status(400).json({
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: (err as any).errors,
         });
       }
 
-      res.status(500).json({ message: 'Internal Server error' });
+      res.status(500).json({ message: "Internal Server error" });
     }
   }
 
@@ -84,6 +89,55 @@ class SongController {
     res.status(204).send();
   }
 
+  // METHOD: to add or remove song to favorite list
+
+  async favoriteSong(req: Request, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized please login" });
+        return;
+      }
+      const songId = req.params.songId;
+      if (!songId) {
+        res.status(400).json({ message: "Please provide song Id" });
+        return;
+      }
+      const user = await User.findById(userId);
+      if (!user) {
+        res.status(404).json({ message: "Unauthorized please login" });
+      }
+      let updatedFavorites = [];
+      if (!!user?.favorites.length) {
+        if (
+          user.favorites.includes(songId as unknown as mongoose.Types.ObjectId)
+        )
+          updatedFavorites = user.favorites.filter(
+            (song) => !song.equals(new mongoose.Types.ObjectId(songId))
+          );
+        else {
+          updatedFavorites = [...user.favorites, songId];
+        }
+      } else {
+        updatedFavorites = [songId];
+      }
+      await User.findByIdAndUpdate(userId, {
+        favorites: [songId]
+      })
+
+      res.status(200).json({message: "Song Favorited"})
+    } catch (error) {
+      if (error instanceof Error && "errors" in error) {
+        res.status(400).json({
+          message: "Validation failed",
+          errors: (error as any).errors,
+        });
+      }
+
+      res.status(500).json({ message: "Internal Server error" });
+
+    }
+  }
 }
 
 export default new SongController();

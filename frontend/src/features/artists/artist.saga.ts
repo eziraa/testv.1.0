@@ -4,8 +4,11 @@ import {
   fetchArtistsSuccess,
   fetchArtistsFailure,
   createArtistFailure,
+  updateArtistFailure,
+  deleteArtistFailure,
 } from './artist.slice';
 import {  type ArtistPayload } from './artist.types';
+import { toast } from 'react-toastify';
 
 
 export enum ArtistActionTypes {
@@ -40,43 +43,88 @@ function* fetchArtistsWorker(): Generator<any, void, { data: any }> {
 }
 
 function* createArtistWorker(action: { type: string; payload: ArtistPayload }) {
+  const toastId = toast.loading("Adding new artist...")
   try {
     yield call(artistAPI.createArtist, action.payload);
+    toast.update(toastId,{
+      render: "Artist added successfully",
+      type: 'success',
+      autoClose: 3000,
+      isLoading: false,
+    })
     yield put({ type: ArtistActionTypes.CREATE_ARTISTS_SUCCESS });
     yield put({type: ArtistActionTypes.FETCH_ARTISTS })
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createArtistFailure(error.message));
-    } else {
-      yield put(createArtistFailure('An unknown error occurred'));
-    }
+    console.log("Create Artist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(createArtistFailure("An unknown error occurred"));
+
   }
 }
 
 function* updateArtistWorker(action: { type: string; payload: { id: string; data: Partial<ArtistPayload> } }) {
+  const toastId = toast.loading("Updating artist...")
   try {
     yield call(artistAPI.updateArtist, action.payload.id, action.payload.data);
+    toast.update(toastId,{
+      render: "Artist updated successfully",
+      autoClose:3000,
+      isLoading: false,
+      type: "success"
+    })
     yield put({ type: ArtistActionTypes.UPDATE_ARTISTS_SUCCESS });
     yield put({ type: ArtistActionTypes.FETCH_ARTISTS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createArtistFailure(error.message));
-    } else {
-      yield put(createArtistFailure('An unknown error occurred'));
-    }  }
+    console.log("Update Artist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(updateArtistFailure("An unknown error occurred"));
+  }
 }
 
 function* deleteArtistWorker(action: { type: string; payload: string }) {
+  const toastId = toast.loading("Deleting artist ...")
   try {
+    toast.update(toastId,{
+      render: "Artist deleted successfully",
+      autoClose:3000,
+      isLoading: false,
+      type: "success"
+    })
     yield call(artistAPI.deleteArtist, action.payload);
     yield put({ type: ArtistActionTypes.DELETE_ARTISTS_SUCCESS });
     yield put({ type: ArtistActionTypes.FETCH_ARTISTS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createArtistFailure(error.message));
-    } else {
-      yield put(createArtistFailure('An unknown error occurred'));
-    } 
+    console.log("Delete Artist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(deleteArtistFailure("An unknown error occurred"));
+
    }
 }
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ErrorMessage, FormContainer, FormHeader, Input, Select, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
-import type { Album, AlbumPayload } from '../../features/albums/album.types';
+import type { Album } from '../../features/albums/album.types';
 import { useForm } from 'react-hook-form';
 import { albumSchema, type AlbumFormData } from '../../validators/album.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,6 @@ import { useDialog } from '../../contexts/dialog.context';
 import { fetchArtists } from '../../features/artists/artist.slice';
 import { resetMutation } from '../../features/albums/album.slice';
 import { ButtonRow, DeleteButton } from '../../components/Button';
-import { fileUploaderAPI } from '../../features/auth/fileuploader.api';
 import { getDateForInput } from '../../utils/date';
 
 

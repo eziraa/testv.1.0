@@ -5,6 +5,7 @@ import {
   PlaylistSchemaZod,
   PlaylistUpdateSchemaZod,
 } from "../validators/playlist.validator";
+import FileUploader from "../utils/FileUploader";
 
 class PlaylistController {
   // METHOD: to get all playlists
@@ -20,11 +21,37 @@ class PlaylistController {
   // METHOD: to create a new playlist
   async createPlaylist(req: Request, res: Response) {
     try {
-      const validatedData = PlaylistSchemaZod.parse(req.body);
+      let coverImageUrl: string | undefined;
+
+      // If image was uploaded, get its URL
+      if (req.file) {
+        coverImageUrl = FileUploader.getFileUrl(req, req.file.filename);
+      }
+
+      // Parse songs from JSON string to array
+      if (!req.body.songs) {
+        req.body.songs = [];
+      } else {
+        req.body.songs = JSON.parse(req.body.songs);
+      }
+      const inputData = {
+        ...req.body,
+        coverImage: coverImageUrl ?? req.body.coverImage,
+      };
+
+      // Parsing songs  string to song array
+      if(req.body.songs){
+        inputData.songs = req.body.songs
+      }
+      else{
+        inputData.songs = []
+      }
+      const validatedData = PlaylistSchemaZod.parse(inputData);
       const newPlaylist = new Playlist(validatedData);
       await newPlaylist.save();
       res.status(201).json(newPlaylist);
     } catch (error) {
+      console.log("SERVER Error", error)
       if (error instanceof Error && "errors" in error) {
         res.status(400).json({
           message: "Validation failed",
@@ -62,7 +89,33 @@ class PlaylistController {
         res.status(400).json({ message: "Playlist ID is required" });
       }
 
-      const validatedData = PlaylistUpdateSchemaZod.parse(req.body);
+      let coverImageUrl: string | undefined;
+
+      // If image was uploaded, get its URL
+      if (req.file) {
+        coverImageUrl = FileUploader.getFileUrl(req, req.file.filename);
+      }
+
+      // Parse songs from JSON string to array
+      if (!req.body.songs) {
+        req.body.songs = [];
+      } else {
+        req.body.songs = JSON.parse(req.body.songs);
+      }
+      const inputData = {
+        ...req.body,
+        coverImage: coverImageUrl ?? req.body.coverImage,
+      };
+
+      const validatedData = PlaylistUpdateSchemaZod.parse(inputData);
+
+      if (coverImageUrl) {
+        const playlist = await Playlist.findById(id);
+        if (!playlist) res.status(404).json({ message: "Playlist not found" });
+        else if (playlist.coverImage) {
+          FileUploader.deleteFile(playlist.coverImage);
+        }
+      }
       const updatedPlaylist = await Playlist.findByIdAndUpdate(
         id,
         validatedData,

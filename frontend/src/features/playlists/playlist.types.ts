@@ -3,6 +3,7 @@ interface PlaylistPayload {
   name: string;
   user: string;
   songs?: string[];
+  coverImage?: string
 }
 interface Playlist extends PlaylistPayload, ITimeStamp {
   _id: string;

@@ -30,10 +30,7 @@ api.interceptors.request.use((config) => {
 
   // Only set Content-Type if NOT sending FormData
   // When sending FormData, let browser set Content-Type with boundary automatically
-  if (
-    config.data &&
-    !(config.data instanceof FormData)
-  ) {
+  if (config.data && !(config.data instanceof FormData)) {
     config.headers = config.headers || {};
     config.headers["Content-Type"] = "application/json";
   } else {
@@ -64,7 +61,10 @@ let failedQueue: Array<() => void> = [];
 /**
  * Retry a request up to 3 times with online check
  */
-const retryWithLimit = async (requestConfig: AxiosRequestConfig<any>, retries = 3) => {
+const retryWithLimit = async (
+  requestConfig: AxiosRequestConfig<any>,
+  retries = 3
+) => {
   let attempts = 0;
   while (attempts < retries) {
     try {
@@ -102,7 +102,9 @@ api.interceptors.response.use(
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
-          failedQueue.push(() => api(originalRequest).then(resolve).catch(reject));
+          failedQueue.push(() =>
+            api(originalRequest).then(resolve).catch(reject)
+          );
         });
       }
 
@@ -138,9 +140,14 @@ api.interceptors.response.use(
       }
     }
 
-    // Server error
-    if (error.response.status === 500) {
-      toast.error("Server error. Please try again later.");
+   
+    console.log("AXIOS ERROR", error);
+    if (error.response.status === 400) {
+      let message = "Bad Request";
+      if (!!error.response?.data?.errors?.length) {
+        message = error.response.data.errors[0]?.message || "Bad Request";
+      }
+      toast.error(message);
     }
 
     return Promise.reject(error);

@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import ArtistList from './ArtistList';
-import type { ArtistPayload } from '../../features/artists/artist.types';
 import AddArtist from './AddArtist';
 import { createArtist, deleteArtist, updateArtist } from '../../features/artists/artist.slice';
 import { Button } from '../../components/Button';
@@ -15,7 +14,7 @@ const ArtistsPage: React.FC = () => {
 
 
 
-  const handleSubmit = (data: ArtistPayload, id?: string) => {
+  const handleSubmit = (data: FormData, id?: string) => {
     if (id) {
       dispatch(updateArtist({ id, data: data }));
     } else {

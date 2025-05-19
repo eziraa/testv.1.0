@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {  type SongPayload,  } from "./song.types";
-import { toast } from "react-toastify";
 import type { Artist } from "../artists/artist.types";
 
 interface Song {
@@ -19,6 +18,7 @@ interface SongState {
   fetching: boolean;
   mutuated: boolean;
   error: string | null;
+  fetchError: string | null;
   creating: boolean;
   deleting: boolean;
   updating: boolean;
@@ -30,6 +30,7 @@ const initialState: SongState = {
   fetching: false,
   mutuated: false,
   error: null,
+  fetchError: null,
   creating: false,
   deleting: false,
   updating: false,
@@ -41,29 +42,29 @@ const songSlice = createSlice({
   reducers: {
     fetchSongs: (state) => {
       state.fetching = true;
-      state.error = null;
+      state.fetchError = null;
     },
     fetchSongsSuccess: (state, action: PayloadAction<Song[]>) => {
       state.songs = action.payload;
       state.fetching = false;
-      state.error = null;
+      state.fetchError = null;
     },
     fetchSongsFailure: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
+      state.fetchError = action.payload;
       state.fetching = false;
     },
 
     fetchSong: (state) => {
-      state.error = null;
+      state.fetchError = null;
       state.fetching = true;
     },
     fetchSongSuccess: (state, action: PayloadAction<Song>) => {
       state.song = action.payload;
       state.fetching = false;
-      state.error = null;
+      state.fetchError = null;
     },
     fetchSongFailure: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
+      state.fetchError = action.payload;
       state.fetching = false;
 
     },
@@ -77,13 +78,11 @@ const songSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.creating = false;
-      toast.success("Song added successfully!")
     },
     createSongFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.creating = false;
-      toast.error("Failed to add song")
     },
 
     deleteSong: (state, _: PayloadAction<string>) => {
@@ -95,13 +94,11 @@ const songSlice = createSlice({
       state.error = null;
       state.mutuated = true
       state.deleting = false;
-      toast.success("Song deleted successfully!")
     },
     deleteSongFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false
       state.deleting = false;
-      toast.error("Failed to delete song")
     },
 
     updateSong: (state, _: PayloadAction<{data: SongPayload, id:string}>) => {
@@ -113,15 +110,29 @@ const songSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.updating = false;
-      toast.success("Song updated successfully!")
     },
     updateSongFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.updating = false;
-      toast.error("Failed to update song")
     },
 
+    favoriteSong: (state, _:PayloadAction<string>) => {
+      state.error= null
+      state.mutuated = false,
+      state.creating = false;
+    },
+
+    favoriteSongSuccess: (state) => {
+      state.error = null;
+      state.mutuated = true;
+      state.updating = false;
+    }
+    ,favoriteSongFailure: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.mutuated = false;
+      state.updating = false;
+    },
     resetMutation: (state, action : PayloadAction<Partial<SongState>>) =>{
       state = {
         ...state,
@@ -152,6 +163,10 @@ export const {
   updateSong,
   updateSongSuccess,
   updateSongFailure,
+
+  favoriteSong,
+  favoriteSongSuccess,
+  favoriteSongFailure,
   resetMutation
 } = songSlice.actions;
 

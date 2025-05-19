@@ -1,12 +1,14 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { albumAPI } from './album.api';
+import { call, put, takeLatest } from "redux-saga/effects";
+import { albumAPI } from "./album.api";
 import {
   fetchAlbumsSuccess,
   fetchAlbumsFailure,
   createAlbumFailure,
-} from './album.slice';
-import {  type AlbumPayload } from './album.types';
-
+  updateAlbumFailure,
+  deleteAlbumFailure,
+} from "./album.slice";
+import { type AlbumPayload } from "./album.types";
+import { toast } from "react-toastify";
 
 export enum AlbumActionTypes {
   FETCH_ALBUMS = "albums/fetchAlbums",
@@ -16,7 +18,7 @@ export enum AlbumActionTypes {
   CREATE_ALBUM = "albums/createAlbum",
   CREATE_ALBUMS_SUCCESS = "albums/createAlbumSuccess",
   CREATE_ALBUMS_FAILURE = "albums/createAlbumFailure",
-  
+
   UPDATE_ALBUM = "albums/updateAlbum",
   UPDATE_ALBUMS_SUCCESS = "albums/updateAlbumSuccess",
   UPDATE_ALBUMS_FAILURE = "albums/updateAlbumFailure",
@@ -28,7 +30,7 @@ export enum AlbumActionTypes {
   FETCH_ALBUM = "albums/fetchAlbum",
   FETCH_ALBUM_SUCCESS = "albums/fetchAlbumSuccess",
   FETCH_ALBUM_FAILURE = "albums/fetchAlbumFailure",
-} 
+}
 
 function* fetchAlbumsWorker(): Generator<any, void, { data: any }> {
   try {
@@ -40,52 +42,107 @@ function* fetchAlbumsWorker(): Generator<any, void, { data: any }> {
 }
 
 function* createAlbumWorker(action: { type: string; payload: AlbumPayload }) {
+  const toastId = toast.loading("Adding new album ...");
   try {
     yield call(albumAPI.createAlbum, action.payload);
+    toast.update(toastId, {
+      render: "New album added successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     yield put({ type: AlbumActionTypes.CREATE_ALBUMS_SUCCESS });
-    yield put({type: AlbumActionTypes.FETCH_ALBUMS })
+    yield put({ type: AlbumActionTypes.FETCH_ALBUMS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createAlbumFailure(error.message));
-    } else {
-      yield put(createAlbumFailure('An unknown error occurred'));
+    console.log("Album creating Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    else {
+      toast.dismiss(toastId);
     }
+    yield put(createAlbumFailure("An unknown error occurred"));
   }
 }
 
-function* updateAlbumWorker(action: { type: string; payload: { id: string; data: Partial<AlbumPayload> } }) {
+function* updateAlbumWorker(action: {
+  type: string;
+  payload: { id: string; data: Partial<AlbumPayload> };
+}) {
+  const toastId = toast.loading("Album updating ...");
   try {
     yield call(albumAPI.updateAlbum, action.payload.id, action.payload.data);
+    toast.update(toastId, {
+      render: "Album updated successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     yield put({ type: AlbumActionTypes.UPDATE_ALBUMS_SUCCESS });
     yield put({ type: AlbumActionTypes.FETCH_ALBUMS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createAlbumFailure(error.message));
-    } else {
-      yield put(createAlbumFailure('An unknown error occurred'));
-    }  }
+    console.log("album updating Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    else {
+      toast.dismiss(toastId);
+    }
+    yield put(updateAlbumFailure("An unknown error occurred"));
+  }
 }
 
 function* deleteAlbumWorker(action: { type: string; payload: string }) {
+  const toastId = toast.loading("Deleting album");
   try {
     yield call(albumAPI.deleteAlbum, action.payload);
+    toast.update(toastId, {
+      render: "Album deleted successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     yield put({ type: AlbumActionTypes.DELETE_ALBUMS_SUCCESS });
     yield put({ type: AlbumActionTypes.FETCH_ALBUMS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createAlbumFailure(error.message));
-    } else {
-      yield put(createAlbumFailure('An unknown error occurred'));
-    } 
-   }
+    console.log("album deleting Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    else {
+      toast.dismiss(toastId);
+    }
+    yield put(deleteAlbumFailure("An unknown error occurred"));
+  }
 }
 
-function* fetchAlbumWorker(action: { type: string; payload: string }): Generator<any, void, { data: any }> {
+function* fetchAlbumWorker(action: {
+  type: string;
+  payload: string;
+}): Generator<any, void, { data: any }> {
   try {
     const response = yield call(albumAPI.getAlbumById, action.payload);
-    yield put({ type: AlbumActionTypes.FETCH_ALBUM_SUCCESS, payload: response.data });
+    yield put({
+      type: AlbumActionTypes.FETCH_ALBUM_SUCCESS,
+      payload: response.data,
+    });
   } catch (error) {
-    yield put({ type: AlbumActionTypes.FETCH_ALBUM_FAILURE, payload: (error as Error).message });
+    yield put({
+      type: AlbumActionTypes.FETCH_ALBUM_FAILURE,
+      payload: (error as Error).message,
+    });
   }
 }
 
@@ -96,5 +153,3 @@ export function* watchAlbums() {
   yield takeLatest(AlbumActionTypes.DELETE_ALBUM, deleteAlbumWorker);
   yield takeLatest(AlbumActionTypes.FETCH_ALBUM, fetchAlbumWorker);
 }
-
-

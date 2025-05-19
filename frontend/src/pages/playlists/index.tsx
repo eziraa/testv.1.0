@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import PlaylistList from './Playlists';
-import type { PlaylistPayload } from '../../features/playlists/playlist.types';
 import AddPlaylist from './AddPlaylist';
 import { createPlaylist, deletePlaylist, updatePlaylist } from '../../features/playlists/playlist.slice';
 import { Button } from '../../components/Button';
@@ -13,7 +12,7 @@ import { Plus } from 'lucide-react';
 const PlaylistsPage: React.FC = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = (data: PlaylistPayload, id?: string) => {
+  const handleSubmit = (data: FormData, id?: string) => {
     if (id) {
       dispatch(updatePlaylist({ id, data: data }));
     } else {
@@ -32,7 +31,7 @@ const PlaylistsPage: React.FC = () => {
         <Title>🎵 Playlists</Title>
         <AddPlaylist
           onSubmit={handleSubmit}
-          triggerContent={<Button><Plus size={18} /></Button>}
+          triggerContent={<Button><Plus size={18} />Add </Button>}
         />
       </Header>
 

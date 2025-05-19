@@ -1,4 +1,4 @@
-import React, { type ReactNode, use, useEffect, useState } from 'react';
+import React, { type ReactNode,  useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useDialog } from '../contexts/dialog.context';
 
@@ -37,29 +37,6 @@ const Dialog: React.FC<DialogProps> = ({ triggerContent,dialogId, children }) =>
     <>
       <TriggerWrapper onClick={() => openDialog(dialogId)}>
         {triggerContent}
-        {/* {
-          isDanger
-            ?
-            outLined
-            ?
-            (
-              <OutlineDeleteButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</OutlineDeleteButton>
-            )
-            :
-            (
-              <DeleteButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</DeleteButton>
-            )
-            :
-            outLined
-            ?
-            (
-              <OutlineButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</OutlineButton>
-            )
-            :
-            (
-              <Button onClick={() => openDialog(dialogId)}>{icon} {triggerText}</Button>
-            )
-        } */}
       </TriggerWrapper>
       {isOpen && (
         <>

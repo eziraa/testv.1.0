@@ -8,7 +8,7 @@ export const authAPI = {
   signup: (data: SignupPayload) => axiosClient.post(`${API_BASE}/signup`, data),
   login: (data: LoginPayload) => axiosClient.post(`${API_BASE}/login`, data),
   logout: () => axiosClient.post(`${API_BASE}/logout`),
-  refreshToken: () => axiosClient.post(`${API_BASE}/refresh-token`),
+  refreshToken: () => axiosClient.post(`${API_BASE}/refreshToken`),
   getMe: () => axiosClient.get(`${API_BASE}/me`),
 }
 

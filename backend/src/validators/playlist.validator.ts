@@ -9,6 +9,10 @@ export const PlaylistSchemaZod = z.object({
   songs: z.array(z.string()).refine(val => val.every(id => mongoose.Types.ObjectId.isValid(id)), {
     message: "Invalid song IDs"
   }),
+  coverImage: z.string().optional().refine(
+    val => !val || z.string().url().safeParse(val).success,
+    { message: "Invalid image URL" }
+  ),
 });
 
 export const PlaylistUpdateSchemaZod = PlaylistSchemaZod.partial();

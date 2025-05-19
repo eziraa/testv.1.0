@@ -1,3 +1,4 @@
+import { string } from 'zod';
 import axiosClient from '../config/axiosClient';
 import type { SongPayload } from './song.types';
 
@@ -26,6 +27,7 @@ export const songAPI = {
   },
   deleteSong: (id: string) => axiosClient.delete(`${API_BASE}/${id}`),
   getSongById: (id: string) => axiosClient.get(`${API_BASE}/${id}`),
+  favoriteSong: (songId: string) => axiosClient.patch(`${API_BASE}/${songId}/favorite`)
 };
 
 

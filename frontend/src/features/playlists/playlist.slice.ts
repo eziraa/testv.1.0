@@ -1,22 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import {  type PlaylistPayload,  } from "./playlist.types";
-import { toast } from "react-toastify";
 import type { Song } from "../songs/song.types";
 
 interface Playlist {
   _id: string;
   name: string;
+  coverImage?: string;
   user: {
     _id: string;
     email: string;
     username: string;
-  } ;
-  
+  };
+
   songs: Song[];
   createdAt: string;
   updatedAt: string;
 }
-
 
 interface PlaylistState {
   playlists: Playlist[];
@@ -73,69 +71,64 @@ const playlistSlice = createSlice({
     fetchPlaylistFailure: (state, action: PayloadAction<string>) => {
       state.fetchError = action.payload;
       state.fetching = false;
-
     },
 
-    createPlaylist: (state, _: PayloadAction<PlaylistPayload>) => {
+    createPlaylist: (state, _: PayloadAction<FormData>) => {
       state.error = null;
-      state.mutuated= false;
+      state.mutuated = false;
       state.creating = true;
     },
     createPlaylistSuccess: (state) => {
       state.error = null;
       state.mutuated = true;
       state.creating = false;
-      toast.success("Playlist added successfully!")
     },
     createPlaylistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.creating = false;
-      toast.error("Failed to add playlist")
     },
 
     deletePlaylist: (state, _: PayloadAction<string>) => {
       state.error = null;
-      state.mutuated= false
+      state.mutuated = false;
       state.deleting = true;
     },
     deletePlaylistSuccess: (state) => {
       state.error = null;
-      state.mutuated = true
+      state.mutuated = true;
       state.deleting = false;
-      toast.success("Playlist deleted successfully!")
     },
     deletePlaylistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.mutuated = false
+      state.mutuated = false;
       state.deleting = false;
-      toast.error("Failed to delete playlist")
     },
 
-    updatePlaylist: (state, _: PayloadAction<{data: PlaylistPayload, id:string}>) => {
+    updatePlaylist: (
+      state,
+      _: PayloadAction<{ data: FormData; id: string }>
+    ) => {
       state.error = null;
-      state.mutuated= false
+      state.mutuated = false;
       state.updating = true;
     },
     updatePlaylistSuccess: (state) => {
       state.error = null;
       state.mutuated = true;
       state.updating = false;
-      toast.success("Playlist updated successfully!")
     },
     updatePlaylistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.updating = false;
-      toast.error("Failed to update playlist")
     },
 
-    resetMutation: (state, action : PayloadAction<Partial<PlaylistState>>) =>{
+    resetMutation: (state, action: PayloadAction<Partial<PlaylistState>>) => {
       state = {
         ...state,
         ...action.payload,
       };
-
     },
   },
 });
@@ -160,7 +153,7 @@ export const {
   updatePlaylist,
   updatePlaylistSuccess,
   updatePlaylistFailure,
-  resetMutation
+  resetMutation,
 } = playlistSlice.actions;
 
 export const playlistReducer = playlistSlice.reducer;

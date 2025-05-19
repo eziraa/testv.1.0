@@ -115,6 +115,29 @@ class AuthController {
       res.status(500).json({ message: "Internal Server Error", error });
     }
   }
+
+  // Refresh token
+  async refreshToken(req: Request, res: Response) {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        res.status(400).json({ message: "Refresh token is required" });
+        return;
+      }
+
+      const user = await User.findOne({ "authTokens.refreshToken": refreshToken });
+      if (!user) {
+        res.status(401).json({ message: "Invalid refresh token" });
+        return;
+      }
+
+      const newAuthTokens = user.generateAuthToken();
+      res.status(200).json({ message: "Token refreshed", authTokens: newAuthTokens });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error });
+    }
+  }
+
   
 }
 

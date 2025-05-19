@@ -132,7 +132,7 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const DateCreated = styled.span`
+export const DateCreated = styled.span`
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;

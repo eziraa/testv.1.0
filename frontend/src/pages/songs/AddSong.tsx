@@ -109,10 +109,7 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => 
       dialogId={dialogId}
       triggerContent={triggerContent}
     >
-      <FormContainer onSubmit={e => {
-        e.preventDefault();
-        return handleSubmit(onDataSubmit)();
-      }}>
+      <FormContainer onSubmit={ handleSubmit(onDataSubmit)}>
         <h2>{editMode ? 'Edit Song' : 'Add New Song'}</h2>
 
         <Input

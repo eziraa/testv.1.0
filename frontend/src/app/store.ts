@@ -1,12 +1,16 @@
-import { configureStore } from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga';
-import { songReducer } from '../features/songs/song.slice';
-import { artistReducer } from '../features/artists/artist.slice';
-import { albumReducer } from '../features/albums/album.slice';
-import { playlistReducer } from '../features/playlists/playlist.slice';
-import {authReducer} from '../features/auth/auth.slice';
-import rootSaga from './root.saga';
-import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
+import { configureStore } from "@reduxjs/toolkit";
+import createSagaMiddleware from "redux-saga";
+import { songReducer } from "../features/songs/song.slice";
+import { artistReducer } from "../features/artists/artist.slice";
+import { albumReducer } from "../features/albums/album.slice";
+import { playlistReducer } from "../features/playlists/playlist.slice";
+import { authReducer } from "../features/auth/auth.slice";
+import rootSaga from "./root.saga";
+import {
+  useDispatch,
+  useSelector,
+  type TypedUseSelectorHook,
+} from "react-redux";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -19,7 +23,14 @@ export const store = configureStore({
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
+    getDefaultMiddleware({
+      thunk: false,
+      erializableCheck: {
+        ignoredActions: ["albums/createAlbum"],
+        ignoredActionPaths: ["payload.coverImage"],
+        ignoredPaths: ["album.coverImage"],
+      },
+    }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(rootSaga);

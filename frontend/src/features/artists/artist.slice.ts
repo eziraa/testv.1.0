@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type Artist, type ArtistPayload,  } from "./artist.types";
-import { toast } from "react-toastify";
+import { type Artist  } from "./artist.types";
 
 
 interface ArtistState {
@@ -67,13 +66,11 @@ const artistSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.creating = false;
-      toast.success("Artist added successfully!")
     },
     createArtistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.creating = false;
-      toast.error("Failed to add artist")
     },
 
     deleteArtist: (state, _: PayloadAction<string>) => {
@@ -85,13 +82,11 @@ const artistSlice = createSlice({
       state.error = null;
       state.mutuated = true
       state.deleting = false;
-      toast.success("Artist deleted successfully!")
     },
     deleteArtistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false
       state.deleting = false;
-      toast.error("Failed to delete artist")
     },
 
     updateArtist: (state, _: PayloadAction<{data: FormData, id:string}>) => {
@@ -103,13 +98,11 @@ const artistSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.updating = false;
-      toast.success("Artist updated successfully!")
     },
     updateArtistFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.updating = false;
-      toast.error("Failed to update artist")
     },
 
     resetMutation: (state, action : PayloadAction<Partial<ArtistState>>) =>{

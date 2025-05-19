@@ -4,8 +4,10 @@ import {
   fetchPlaylistsSuccess,
   fetchPlaylistsFailure,
   createPlaylistFailure,
+  deletePlaylistFailure,
 } from './playlist.slice';
 import {  type PlaylistPayload } from './playlist.types';
+import { toast } from 'react-toastify';
 
 
 export enum PlaylistActionTypes {
@@ -40,43 +42,88 @@ function* fetchPlaylistsWorker(): Generator<any, void, { data: any }> {
 }
 
 function* createPlaylistWorker(action: { type: string; payload: PlaylistPayload }) {
+  const toastId = toast.loading("Creating new playlist ...")
   try {
     yield call(playlistAPI.createPlaylist, action.payload);
+    toast.update(toastId, {
+      render: "Playlist created successfully",
+      type: 'success',
+      isLoading: false,
+      autoClose:3000,
+    });
     yield put({ type: PlaylistActionTypes.CREATE_PLAYLISTS_SUCCESS });
     yield put({type: PlaylistActionTypes.FETCH_PLAYLISTS })
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createPlaylistFailure(error.message));
-    } else {
-      yield put(createPlaylistFailure('An unknown error occurred'));
-    }
+    console.log("Create playlist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(createPlaylistFailure("An unknown error occurred"));
+
   }
 }
 
 function* updatePlaylistWorker(action: { type: string; payload: { id: string; data: Partial<PlaylistPayload> } }) {
+  const toastId =  toast.loading("Updating palylist ...")
   try {
     yield call(playlistAPI.updatePlaylist, action.payload.id, action.payload.data);
+    toast.update(toastId, {
+      render: "Playlist updated successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     yield put({ type: PlaylistActionTypes.UPDATE_PLAYLISTS_SUCCESS });
     yield put({ type: PlaylistActionTypes.FETCH_PLAYLISTS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createPlaylistFailure(error.message));
-    } else {
-      yield put(createPlaylistFailure('An unknown error occurred'));
-    }  }
+    console.log("Update playlist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(createPlaylistFailure("An unknown error occurred"));
+  }
 }
 
 function* deletePlaylistWorker(action: { type: string; payload: string }) {
+  const toastId = toast.loading("Deleting playlist ...")
   try {
     yield call(playlistAPI.deletePlaylist, action.payload);
+    toast.update(toastId, {
+      render: "Playlist deleted successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     yield put({ type: PlaylistActionTypes.DELETE_PLAYLISTS_SUCCESS });
     yield put({ type: PlaylistActionTypes.FETCH_PLAYLISTS });
   } catch (error) {
-    if (error instanceof Error && error.message) {
-      yield put(createPlaylistFailure(error.message));
-    } else {
-      yield put(createPlaylistFailure('An unknown error occurred'));
-    } 
+    console.log("Delete playlist Error", error);
+    if ((error as { response: { status: number } })?.response?.status !== 400)
+      toast.update(toastId, {
+        render: "Internal server error",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      else{
+        toast.dismiss(toastId)
+      }
+    yield put(deletePlaylistFailure("An unknown error occurred"));
+
    }
 }
 

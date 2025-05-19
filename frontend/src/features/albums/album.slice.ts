@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import type { Artist } from "../artists/artist.types";
 import type { Song } from "../songs/song.types";
 
@@ -80,13 +79,11 @@ const albumSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.creating = false;
-      toast.success("Album added successfully!");
     },
     createAlbumFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.creating = false;
-      toast.error("Failed to add album");
     },
 
     deleteAlbum: (state, _: PayloadAction<string>) => {
@@ -98,13 +95,11 @@ const albumSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.deleting = false;
-      toast.success("Album deleted successfully!");
     },
     deleteAlbumFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.deleting = false;
-      toast.error("Failed to delete album");
     },
 
     updateAlbum: (
@@ -119,13 +114,11 @@ const albumSlice = createSlice({
       state.error = null;
       state.mutuated = true;
       state.updating = false;
-      toast.success("Album updated successfully!");
     },
     updateAlbumFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.mutuated = false;
       state.updating = false;
-      toast.error("Failed to update album");
     },
 
     resetMutation: (state, action: PayloadAction<Partial<AlbumState>>) => {

@@ -7,7 +7,7 @@ interface User {
   _id: string;
   email: string;
   username: string;
-  favoriteSongs: string[];
+  favorites: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -128,7 +128,6 @@ const authSlice = createSlice({
     getMe: (state) => {
       state.fetching = true;
       state.error = null;
-      state.toastId = toast.loading("Fetching user...");
       state.mutuated = false;
     },
     getMeSuccess: (state, action: PayloadAction<AuthState>) => {
@@ -137,12 +136,7 @@ const authSlice = createSlice({
       state.authTokens = action.payload.authTokens
       state.error = null;
       state.mutuated = true;
-      toast.update(state.toastId, {
-        render: "Fetched user successfully",
-        type: "success",
-        isLoading: false,
-        autoClose:3000,
-      });
+      
     },
     getMeFailure: (state, action: PayloadAction<string>) => {
       state.fetching = false;
@@ -158,7 +152,6 @@ const authSlice = createSlice({
     refreshToken: (state) => {
       state.fetching = true;
       state.error = null;
-      state.toastId = toast.loading("Refreshing token...");
       state.mutuated = false;
     },
     refreshTokenSuccess: (state, action: PayloadAction<AuthState>) => {
@@ -167,12 +160,10 @@ const authSlice = createSlice({
       state.authTokens = action.payload.authTokens
       state.error = null;
       state.mutuated = true;
-      toast.success("Refreshed token successfully", {toastId: state.toastId});
     },
     refreshTokenFailure: (state, action: PayloadAction<string>) => {
       state.fetching = false;
       state.error = action.payload;
-      state.toastId = toast.error("Failed to refresh token", {toastId: state.toastId});
     },
     resetMutation: (state, action : PayloadAction<Partial<AuthState>>) =>{
       state = {
