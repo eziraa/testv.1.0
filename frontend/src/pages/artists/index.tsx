@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -6,6 +6,8 @@ import ArtistList from './ArtistList';
 import type { ArtistPayload } from '../../features/artists/artist.types';
 import AddArtist from './AddArtist';
 import { createArtist, deleteArtist, updateArtist } from '../../features/artists/artist.slice';
+import { Button } from '../../components/Button';
+import { Plus } from 'lucide-react';
 
 
 const ArtistsPage: React.FC = () => {
@@ -15,21 +17,16 @@ const ArtistsPage: React.FC = () => {
 
   const handleSubmit = (data: ArtistPayload, id?: string) => {
     if (id) {
-      // dispatch(({ id, data: artist }));
+      dispatch(updateArtist({ id, data: data }));
     } else {
       dispatch(createArtist(data));
     }
   };
 
-  const handleEdit = (artist: ArtistPayload, id?: string) => {
-    dispatch(updateArtist({ data: artist , id: id || '' }));
-  };
 
   const handleDelete = (artistId: string) => {
     dispatch(deleteArtist(artistId));
   };
-
-  
 
 
   return (
@@ -38,10 +35,11 @@ const ArtistsPage: React.FC = () => {
         <h1>🎵 Artists</h1>
         <AddArtist
           onSubmit={handleSubmit}
+          triggerContent={<Button><Plus size={18} /> Artist</Button>}
         />
       </Header>
 
-      <ArtistList onEdit={handleEdit} onDelete={handleDelete} />
+      <ArtistList onEdit={handleSubmit} onDelete={handleDelete} />
 
 
     </PageWrapper>

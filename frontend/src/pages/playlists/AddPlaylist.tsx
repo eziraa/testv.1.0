@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
-import { Pencil, Plus } from 'lucide-react';
 import { fetchSongs } from '../../features/songs/song.slice';
 import { resetMutation } from '../../features/playlists/playlist.slice';
 
@@ -16,10 +15,12 @@ import { resetMutation } from '../../features/playlists/playlist.slice';
 interface Props {
   onSubmit: (playlist: PlaylistPayload, id?: string) => void;
   editingPlaylist?: Playlist | null;
+  triggerContent: React.ReactNode;
 }
 
-const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist }) => {
+const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerContent }) => {
 
+  const editMode = !!editingPlaylist;
   const user = useAppSelector(state => state.auth.user)
   const dispatch = useAppDispatch()
   const { closeDialog, openedDialogs } = useDialog()
@@ -79,15 +80,27 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist }) => {
     });
   }, [editingPlaylist, reset, openedDialogs]);
 
+  const prepareBtnText = () => {
+    if (creating) {
+      return 'Creating...';
+    }
+    if (updating) {
+      return 'Updating...';
+    }
+    if (editMode) {
+      return 'Update Playlist';
+    }
+    return 'Add Playlist';
+  };
 
 
   return (
     <Dialog
       dialogId={dialogId}
-      icon={editingPlaylist ? <Pencil size={18} /> : <Plus size={18} />}
-      triggerText={<span>  Playlist</span>}    >
+      triggerContent={triggerContent}
+    >
       <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
-        <h2>{editingPlaylist ? 'Edit Playlist' : 'Add New Playlist'}</h2>
+        <h2>{editMode ? 'Edit Playlist' : 'Add New Playlist'}</h2>
 
         <Input
           id="name"
@@ -130,7 +143,7 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist }) => {
 
 
         <SubmitButton disabled={creating || updating} type="submit">
-          {editingPlaylist ? 'Update Playlist' : 'Add Playlist'}
+          {prepareBtnText()}
         </SubmitButton>
       </FormContainer>
     </Dialog>

@@ -6,6 +6,8 @@ import AlbumList from './AlbumList';
 import type { AlbumPayload } from '../../features/albums/album.types';
 import AddAlbum from './AddAlbum';
 import { createAlbum, deleteAlbum, updateAlbum } from '../../features/albums/album.slice';
+import { Button } from '../../components/Button';
+import { Plus } from 'lucide-react';
 
 
 const AlbumsPage: React.FC = () => {
@@ -30,6 +32,7 @@ const AlbumsPage: React.FC = () => {
         <Title>🎵 Albums</Title>
         <AddAlbum
           onSubmit={handleSubmit}
+          triggerContent={<Button><Plus size={18}/> Album</Button>}
         />
       </Header>
 

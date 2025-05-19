@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { ButtonRoot } from "./Button";
+import { Button, ButtonRoot } from "./Button";
 
 const FormContainer = styled.form`
   background: ${({ theme }) => theme.formBackground || '#fff'};
@@ -30,6 +30,14 @@ const FormContainer = styled.form`
 interface InputProps {
   hasError?: boolean;
 }
+
+const FormHeader = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 0.3rem;
+  justify-content: space-between;
+  align-items: center;
+`
 
 const Input = styled.input<InputProps>`
   width: 100%;
@@ -76,18 +84,12 @@ const Select = styled.select<InputProps>`
   }
 `
 
-const SubmitButton = styled(ButtonRoot)`
-  background-color: ${({ theme }) => theme.primaryButtonBg || '#007bffdd'};
-  padding: 0.7rem 1.5rem;
-  color: ${({ theme }) => theme.primaryButtonColor || '#fff'};
-  border: none;
-  border-radius: 8px;
+const SubmitButton = styled(Button)`
+  
   cursor: pointer;
   transition: background-color 0.3s ease;
 
-  &:hover {
-    background-color: ${({ theme }) => theme.primaryButtonHoverBg || '#007bff'};
-  }
+
 
   &:disabled {
     opacity: 0.9;
@@ -103,7 +105,7 @@ const ErrorMessage = styled.span<InputProps>`
   display: ${({ hasError }) => (hasError ? 'block' : 'none')};
 `;
 
-const InputGroup= styled.div`
+const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -116,4 +118,4 @@ const Label = styled.label`
   color: ${({ theme }) => theme.labelColor || '#333'};
 `;
 
-export { FormContainer, Input,Select, InputGroup, Label, ErrorMessage, SubmitButton };
+export { FormContainer, Input, Select, FormHeader, InputGroup, Label, ErrorMessage, SubmitButton };

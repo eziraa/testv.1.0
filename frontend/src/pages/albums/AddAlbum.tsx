@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ErrorMessage, FormContainer, Input, Select, SubmitButton } from '../../components/Form';
+import { ErrorMessage, FormContainer, FormHeader, Input, Select, SubmitButton } from '../../components/Form';
 import Dialog from '../../components/Dialog';
 import type { Album, AlbumPayload } from '../../features/albums/album.types';
 import { useForm } from 'react-hook-form';
@@ -8,17 +8,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
-import { Pencil, Plus } from 'lucide-react';
 import { fetchArtists } from '../../features/artists/artist.slice';
+import { resetMutation } from '../../features/albums/album.slice';
+import { ButtonRow,  DeleteButton } from '../../components/Button';
 
 
 interface Props {
   onSubmit: (album: AlbumPayload, id?: string) => void;
   editingAlbum?: Album | null;
+  triggerContent?: React.ReactNode;
 }
 
-const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
+const AddAlbum: React.FC<Props> = ({ onSubmit,triggerContent, editingAlbum }) => {
 
+  const editMode = !!editingAlbum;
   const dispatch = useAppDispatch()
   const { closeDialog, openedDialogs } = useDialog()
   const { artists } = useAppSelector(state => state.artists)
@@ -30,7 +33,7 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { isDirty, errors }
   } = useForm<AlbumFormData>({
     resolver: zodResolver(albumSchema),
     defaultValues: {
@@ -58,6 +61,9 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
   useEffect(() => {
     if (mutuated) {
       closeDialog(dialogId)
+      dispatch(resetMutation({
+        mutuated: false,
+      }))
     }
   }, [mutuated])
 
@@ -78,14 +84,26 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
   }, [editingAlbum, reset, openedDialogs]);
 
 
+  const prepareBtnText = () => {
+    if (creating) {
+      return 'Adding...';
+    }
+    if (updating) {
+      return 'Saving...';
+    }
+    return editMode ? 'Save' : 'Add Album';
+  };
 
   return (
     <Dialog
       dialogId={dialogId}
-      icon={editingAlbum ? <Pencil size={18} /> : <Plus size={18} />}
-      triggerText={<span>  Album</span>}    >
-      <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
-        <h2>{editingAlbum ? 'Edit Album' : 'Add New Album'}</h2>
+      triggerContent={triggerContent}
+      >
+      <FormContainer
+        onSubmit={handleSubmit(onDataSubmit)}>
+        <FormHeader>
+          <h2>{editMode ? 'Edit Album' : 'Add New Album'}</h2>
+        </FormHeader>
 
         <Input
           id="name"
@@ -143,12 +161,31 @@ const AddAlbum: React.FC<Props> = ({ onSubmit, editingAlbum }) => {
         <ErrorMessage hasError={!!errors.coverImage}>
           {errors.coverImage?.message}
         </ErrorMessage>
-        <SubmitButton disabled={creating || updating} type="submit">
-          {editingAlbum ? 'Update Album' : 'Add Album'}
-        </SubmitButton>
+        <ButtonRow>
+          {editMode && isDirty && <DeleteButton
+            onClick={() => {
+              reset({
+                title: editingAlbum?.title,
+                artist: editingAlbum?.artist,
+                genre: editingAlbum?.genre,
+                releaseDate: editingAlbum?.releaseDate,
+                songs: editingAlbum?.songs,
+                coverImage: editingAlbum?.coverImage
+              });
+            }}
+            disabled={creating || updating}
+          >
+            Discard changes
+          </DeleteButton>}
+          <SubmitButton disabled={creating || updating} type="submit">
+            {prepareBtnText()}
+          </SubmitButton>
+        </ButtonRow>
       </FormContainer>
     </Dialog>
   );
 };
 
 export default AddAlbum;
+
+

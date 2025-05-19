@@ -15,8 +15,10 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  refeshToken: string | null;
-  accessToken: string | null;
+  authTokens: {
+    accessToken: string | null;
+    refreshToken: string | null;
+  },
   error: string | null;
   fetching: boolean;
   mutuated: boolean;
@@ -28,8 +30,10 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  refeshToken: null,
-  accessToken: null,
+  authTokens: {
+    accessToken: null,
+    refreshToken: null,
+  },
   error: null,
   fetching: false,
   mutuated: false,
@@ -52,8 +56,7 @@ const authSlice = createSlice({
     signupSuccess: (state, action: PayloadAction<AuthState>) => {
       state.signingUp = false;
       state.user = action.payload.user;
-      state.refeshToken = action.payload.refeshToken;
-      state.accessToken = action.payload.accessToken;
+      state.authTokens = action.payload.authTokens
       state.error = null;
       state.mutuated = true;
       toast.success("Signed up successfully", {updateId: state.toastId, });
@@ -75,16 +78,29 @@ const authSlice = createSlice({
     loginSuccess: (state, action: PayloadAction<AuthState>) => {
       state.logingIn = false;
       state.user = action.payload.user;
-      state.refeshToken = action.payload.refeshToken;
-      state.accessToken = action.payload.accessToken;
+      state.authTokens = action.payload.authTokens
+      if (action.payload.authTokens) {
+        localStorage.setItem("accessToken", action.payload.authTokens.accessToken || "");
+        localStorage.setItem("refreshToken", action.payload.authTokens.refreshToken || "");
+      }
       state.error = null;
       state.mutuated = true;
-      toast.success("Signed in successfully", {toastId: state.toastId});
+      toast.update(state.toastId, {
+        render: "Signed in successfully",
+        type: "success",
+        isLoading: false,
+        autoClose:3000,
+      });
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.logingIn = false;
       state.error = action.payload;
-      state.toastId = toast.error("Failed to sign in", {toastId: state.toastId});
+      toast.update(state.toastId, {
+        render: action.payload || "Failed to sign in",
+        type: "error",
+        isLoading: false,
+        autoClose:3000,
+      });
     },
 
     logout: (state) => {
@@ -96,8 +112,10 @@ const authSlice = createSlice({
     logoutSuccess: (state) => {
       state.signingOut = false;
       state.user = null;
-      state.refeshToken = null;
-      state.accessToken = null;
+      state.authTokens = {
+        accessToken: null,
+        refreshToken: null,
+      }
       state.error = null;
       state.mutuated = true;
       toast.success("Signed out successfully", {toastId: state.toastId});
@@ -116,16 +134,25 @@ const authSlice = createSlice({
     getMeSuccess: (state, action: PayloadAction<AuthState>) => {
       state.fetching = false;
       state.user = action.payload.user;
-      state.refeshToken = action.payload.refeshToken;
-      state.accessToken = action.payload.accessToken;
+      state.authTokens = action.payload.authTokens
       state.error = null;
       state.mutuated = true;
-      toast.success("Fetched user successfully", {toastId: state.toastId});
+      toast.update(state.toastId, {
+        render: "Fetched user successfully",
+        type: "success",
+        isLoading: false,
+        autoClose:3000,
+      });
     },
     getMeFailure: (state, action: PayloadAction<string>) => {
       state.fetching = false;
       state.error = action.payload;
-      state.toastId = toast.error("Failed to fetch user", {toastId: state.toastId});
+      toast.update(state.toastId, {
+        render: action.payload || "Failed to fetch user",
+        type: "error",
+        isLoading: false,
+        autoClose:3000,
+      });
     },
 
     refreshToken: (state) => {
@@ -137,8 +164,7 @@ const authSlice = createSlice({
     refreshTokenSuccess: (state, action: PayloadAction<AuthState>) => {
       state.fetching = false;
       state.user = action.payload.user;
-      state.refeshToken = action.payload.refeshToken;
-      state.accessToken = action.payload.accessToken;
+      state.authTokens = action.payload.authTokens
       state.error = null;
       state.mutuated = true;
       toast.success("Refreshed token successfully", {toastId: state.toastId});

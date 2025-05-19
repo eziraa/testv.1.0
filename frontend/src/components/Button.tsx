@@ -25,7 +25,9 @@ export const ButtonRoot = styled.button`
 
 const ButtonRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
+  gap: 0.7rem;
+  align-items: center;
   margin-top: 1rem;
 `;
 
@@ -37,7 +39,7 @@ const Button = styled(ButtonRoot)`
   justify-content: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  padding: 0.4rem;
+  padding: 0.6rem 1rem;
   &:hover {
     background-color: ${({ theme }) => theme.buttonPrimaryHoverBackground || '#005bb5'};
   }
@@ -54,6 +56,29 @@ const DeleteButton = styled(Button)`
 
   &:hover {
     background-color: ${({ theme }) => theme.buttonDeleteHoverBackground || '#d9363e'};
+  }
+`;
+
+const OutlineButton = styled(ButtonRoot)`
+  background-color: transparent;
+  color: ${({ theme }) => theme.buttonPrimaryBackground || '#0070f3'};
+  border: 1px solid ${({ theme }) => theme.buttonPrimaryBackground || '#0070f3'};
+  padding: 0.3rem 0.7rem; 
+  font-size: 0.875rem;
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimaryHoverBackground || '#005bb5'};
+    color: white;
+  }
+`;
+
+const OutlineDeleteButton = styled(OutlineButton)`
+  background-color: transparent;
+  padding: 0.3rem 0.7rem; 
+  color: ${({ theme }) => theme.buttonDeleteBackground || '#ff4d4f'};
+  border: 1px solid ${({ theme }) => theme.buttonDeleteBackground || '#ff4d4f'};
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonDeleteHoverBackground || '#d9363e'};
+    color: white;
   }
 `;
 
@@ -81,4 +106,21 @@ const CloseButton = styled.button`
   }
 `;
 
-export { Button, DeleteButton, CloseButton, ButtonRow };
+
+ const CancelButton = styled(Button)`
+  background-color: ${({ theme }) => theme.cancelButtonBackground || '#f3f3f3'};
+  color: ${({ theme }) => theme.cancelButtonText || '#333'};
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  &:hover {
+    background-color: ${({ theme }) => theme.cancelButtonHover || '#e0e0e0'};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.45rem;
+  }
+`;
+
+
+export { Button,OutlineButton,  DeleteButton, OutlineDeleteButton,CancelButton, CloseButton, ButtonRow };

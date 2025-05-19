@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Card } from '../../components/Card';
-import { ButtonRow } from '../../components/Button';
+import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import type { AlbumPayload } from '../../features/albums/album.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { fetchAlbums } from '../../features/albums/album.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddAlbum from './AddAlbum';
 import DeleteDialog from '../../components/DeleteDialog';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (album: AlbumPayload, id?: string) => void;
@@ -16,7 +17,7 @@ interface Props {
 
 const AlbumList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const dispatch = useAppDispatch();
-  const { albums, fetching, error, mutuated, deleting } = useAppSelector(
+  const { albums, fetching, error,fetchError, mutuated, deleting } = useAppSelector(
     (state) => state.albums
   );
 
@@ -26,8 +27,8 @@ const AlbumList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   if (fetching) return <LoadingPage />;
 
-  if (error)
-    return <MessageContainer>Error: {error}</MessageContainer>;
+  if (fetchError)
+    return <MessageContainer>Error: {fetchError}</MessageContainer>;
 
   if (!albums || albums.length === 0)
     return <MessageContainer>No albums found</MessageContainer>;
@@ -52,10 +53,13 @@ const AlbumList: React.FC<Props> = ({ onEdit, onDelete }) => {
               <AddAlbum editingAlbum={{
                 ...album,
                 artist: album.artist?._id || "",
-              }} onSubmit={onEdit} />
+              }} 
+              onSubmit={onEdit}
+              triggerContent={<OutlineButton><Pencil size={16}/></OutlineButton>}
+               />
               <DeleteDialog
+                triggerContent={<OutlineDeleteButton><Trash2 size={18}/></OutlineDeleteButton>}
                 dialogId={`delete-album-${album._id}`}
-                triggerText="Delete"
                 itemName="Album"
                 deleteStatus={{
                   deleted: mutuated,

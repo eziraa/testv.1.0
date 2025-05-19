@@ -1,17 +1,14 @@
 import React, { type ReactNode, use, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useDialog } from '../contexts/dialog.context';
-import { Button, DeleteButton } from './Button';
 
 interface DialogProps {
-  triggerText: ReactNode;
+  triggerContent: ReactNode;
   children: ReactNode;
   dialogId: string;
-  isDanger?: boolean;
-  icon?: ReactNode;
 }
 
-const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, icon, isDanger = false, children }) => {
+const Dialog: React.FC<DialogProps> = ({ triggerContent,dialogId, children }) => {
 
   const { openDialog, openedDialogs, closeDialog } = useDialog()
   const [isOpen, setIsOpen] = useState(false);
@@ -38,18 +35,31 @@ const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, icon, isDanger =
 
   return (
     <>
-      <TriggerWrapper>
-        {
+      <TriggerWrapper onClick={() => openDialog(dialogId)}>
+        {triggerContent}
+        {/* {
           isDanger
             ?
+            outLined
+            ?
+            (
+              <OutlineDeleteButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</OutlineDeleteButton>
+            )
+            :
             (
               <DeleteButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</DeleteButton>
             )
             :
+            outLined
+            ?
             (
-              <Button onClick={() => { openDialog(dialogId); }}> {icon} {triggerText}</Button>
+              <OutlineButton onClick={() => openDialog(dialogId)}>{icon} {triggerText}</OutlineButton>
             )
-        }
+            :
+            (
+              <Button onClick={() => openDialog(dialogId)}>{icon} {triggerText}</Button>
+            )
+        } */}
       </TriggerWrapper>
       {isOpen && (
         <>
@@ -60,7 +70,7 @@ const Dialog: React.FC<DialogProps> = ({ triggerText, dialogId, icon, isDanger =
             } >
             <Content onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="dialog-title">
               {children}
-              <CloseButton style={isDanger ? { color: "red" } : {}} onClick={() => closeDialog(dialogId)} aria-label="Close modal">&times;</CloseButton>
+              <CloseButton style={dialogId.includes('delete') ? { color: "red" } : {}} onClick={() => closeDialog(dialogId)} aria-label="Close modal">&times;</CloseButton>
             </Content>
           </Overlay>
         </>
@@ -118,9 +128,11 @@ const Content = styled.div`
   }
 `;
 
-const TriggerWrapper = styled.div`
+const TriggerWrapper = styled.button`
   display: inline-block;
   cursor: pointer;
+  padding: 0;
+  background-color: transparent;
 `;
 
 const CloseButton = styled.button`

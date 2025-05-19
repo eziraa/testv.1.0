@@ -5,20 +5,21 @@ import type { Artist, ArtistPayload } from '../../features/artists/artist.types'
 import { useForm } from 'react-hook-form';
 import { artistSchema, type ArtistFormData } from '../../validators/artist.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {  useAppSelector } from '../../app/store';
+import { useAppSelector } from '../../app/store';
 import { toast } from 'react-toastify';
 import { useDialog } from '../../contexts/dialog.context';
-import { Plus } from 'lucide-react';
-import { Dismissable } from '../../components/Layout';
+import { ButtonRow, DeleteButton } from '../../components/Button';
 
 
 interface Props {
   onSubmit: (artist: ArtistPayload, id?: string) => void;
   editingArtist?: Artist | null;
+  triggerContent: React.ReactNode;
 }
 
-const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
+const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist }) => {
 
+  const editMode = !!editingArtist;
   const { closeDialog } = useDialog()
   const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-" + editingArtist._id : "add-artist"}`, [editingArtist]);
 
@@ -27,7 +28,8 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    reset,
+    formState: { errors, isDirty }
   } = useForm<ArtistFormData>({
     resolver: zodResolver(artistSchema),
     defaultValues: {
@@ -55,15 +57,37 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
     }
   }, [mutuated])
 
+  useEffect(() => {
+    if (editingArtist) {
+      reset({
+        name: editingArtist.name,
+        bio: editingArtist.bio,
+        profilePicture: editingArtist.profilePicture
+      });
+    }
+  }, [editingArtist, reset]);
 
 
+
+  const prepareBtnText = () => {
+    if (creating) {
+      return 'Adding...';
+    }
+    if (updating) {
+      return 'Saving...';
+    }
+    if (editMode) {
+      return 'Save ';
+    }
+    return 'Add artist';
+  };
   return (
     <Dialog
       dialogId={dialogId}
-      icon={<Plus size={20} />}
-      triggerText={<span> <Dismissable>{editingArtist ? "Edit" : "Add"}</Dismissable> Song</span>}    >
+      triggerContent={triggerContent}
+    >
       <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
-        <h2>{editingArtist ? 'Edit Artist' : 'Add New Artist'}</h2>
+        <h2>{editMode ? 'Edit Artist' : 'Add New Artist'}</h2>
 
         <Input
           id="name"
@@ -92,9 +116,23 @@ const AddArtist: React.FC<Props> = ({ onSubmit, editingArtist }) => {
         <ErrorMessage hasError={!!errors.profilePicture}>
           {errors.profilePicture?.message}
         </ErrorMessage>
-        <SubmitButton disabled={creating || updating} type="submit">
-          {editingArtist ? 'Update Artist' : 'Add Artist'}
-        </SubmitButton>
+        <ButtonRow>
+          {editMode && isDirty && <DeleteButton
+            onClick={() => {
+              reset({
+                name: editingArtist?.name,
+                bio: editingArtist?.bio,
+                profilePicture: editingArtist?.profilePicture
+              });
+            }}
+            disabled={creating || updating}
+          >
+            Discard changes
+          </DeleteButton>}
+          <SubmitButton disabled={creating || updating} type="submit">
+            {prepareBtnText()}
+          </SubmitButton>
+        </ButtonRow>
       </FormContainer>
     </Dialog>
   );

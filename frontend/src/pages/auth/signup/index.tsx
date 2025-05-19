@@ -100,6 +100,8 @@ const Container = styled.div`
   @media (max-width: 480px) {
     padding: 0.5rem;
   }
+
+  overflow: hidden;
 `;
 
 const Card = styled.div`

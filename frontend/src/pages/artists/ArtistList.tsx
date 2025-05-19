@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Card } from '../../components/Card';
-import { ButtonRow } from '../../components/Button';
+import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import type { ArtistPayload } from '../../features/artists/artist.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { fetchArtists } from '../../features/artists/artist.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddArtist from './AddArtist';
 import DeleteDialog from '../../components/DeleteDialog';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (artist: ArtistPayload, id?: string) => void;
@@ -55,14 +56,16 @@ const ArtistList: React.FC<Props> = ({ onEdit, onDelete }) => {
               <p>Artist Name: {artist.name}</p>
               <p>Bio: {artist.bio}</p>
               <p>Profile Picture: {artist.profilePicture}</p>
-              <ButtonRow>
+              <ButtonRow style={{ gap: "0.5rem" }}>
                 <AddArtist
                   editingArtist={artist}
                   onSubmit={onEdit}
+                  triggerContent={<OutlineButton><Pencil size={16} /></OutlineButton>}
                 />
                 <DeleteDialog
+                  triggerContent={<OutlineDeleteButton><Trash2 size={18} /></OutlineDeleteButton>}
+
                   dialogId={`delete-artist-${artist._id}`}
-                  triggerText="Delete"
                   itemName={"Artist"}
                   deleteStatus={{
                     deleted: mutuated,

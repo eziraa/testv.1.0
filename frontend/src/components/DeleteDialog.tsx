@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import Dialog from './Dialog';
-import { Button, DeleteButton } from './Button';
+import {  CancelButton, DeleteButton } from './Button';
 import styled from 'styled-components';
 import { useDialog } from '../contexts/dialog.context';
-import { Trash } from 'lucide-react';
 
 interface DeleteDialogProps {
   dialogId: string;
-  triggerText: string;
+  triggerContent: React.ReactNode;
   itemName: string;
   onDelete: () => void;
   deleteStatus?: { deleted: boolean, deleting: boolean, error: string | null };
@@ -15,10 +14,10 @@ interface DeleteDialogProps {
 
 const DeleteDialog: React.FC<DeleteDialogProps> = ({
   dialogId,
-  triggerText,
+  triggerContent,
   itemName,
   onDelete,
-  deleteStatus
+  deleteStatus,
 }) => {
 
   const { closeDialog } = useDialog()
@@ -34,7 +33,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
   }, [deleteStatus]);
 
   return (
-    <Dialog dialogId={dialogId} icon={<Trash size={20} />} isDanger triggerText={triggerText}>
+    <Dialog   dialogId={dialogId}  triggerContent={triggerContent}>
       <Container>
         <Header>Delete {itemName}?</Header>
         <Message>
@@ -67,7 +66,7 @@ export default DeleteDialog;
 
 // Styled Components
 const Container = styled.div`
-  background-color: ${({ theme }) => theme.formBackground};
+  background-color: ${({ theme }) => theme.cardBg};
   padding: 2rem;
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.dialogBoxShadow || '0 10px 30px rgba(0, 0, 0, 0.1)'};
@@ -101,17 +100,4 @@ const ButtonRow = styled.div`
   width: 100%;
 `;
 
-const CancelButton = styled(Button)`
-  background-color: ${({ theme }) => theme.cancelButtonBackground || '#f3f3f3'};
-  color: ${({ theme }) => theme.cancelButtonText || '#333'};
-  padding: 0.6rem 1rem;
-  font-size: 0.875rem;
-  &:hover {
-    background-color: ${({ theme }) => theme.cancelButtonHover || '#e0e0e0'};
-  }
 
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 0.45rem;
-  }
-`;

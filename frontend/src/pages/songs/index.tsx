@@ -6,6 +6,8 @@ import SongList from './SongList';
 import type {  SongPayload } from '../../features/songs/song.types';
 import AddSong from './AddSong';
 import { createSong, deleteSong, updateSong } from '../../features/songs/song.slice';
+import { Button } from '../../components/Button';
+import { Plus } from 'lucide-react';
 
 
 const SongsPage: React.FC = () => {
@@ -30,6 +32,7 @@ const SongsPage: React.FC = () => {
         <h1>🎵 Songs</h1>
         <AddSong
             onSubmit={handleSubmit}
+            triggerContent={<Button > <Plus size={18}/> Song </Button>}
           />
       </Header>
 

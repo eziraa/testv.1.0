@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Card } from '../../components/Card';
-import { ButtonRow } from '../../components/Button';
+import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
 import type { PlaylistPayload } from '../../features/playlists/playlist.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { fetchPlaylists } from '../../features/playlists/playlist.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddPlaylist from './AddPlaylist';
 import DeleteDialog from '../../components/DeleteDialog';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (playlist: PlaylistPayload, id?: string) => void;
@@ -16,7 +17,7 @@ interface Props {
 
 const PlaylistList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const dispatch = useAppDispatch();
-  const { playlists, fetching, error, mutuated, deleting } = useAppSelector((state) => state.playlists);
+  const { playlists, fetching, error,fetchError, mutuated, deleting } = useAppSelector((state) => state.playlists);
 
   useEffect(() => {
     dispatch(fetchPlaylists());
@@ -24,7 +25,7 @@ const PlaylistList: React.FC<Props> = ({ onEdit, onDelete }) => {
 
   if (fetching) return <LoadingPage />;
 
-  if (error) return <MessageContainer>Error: {error}</MessageContainer>;
+  if (fetchError) return <MessageContainer>Fetch Error: {fetchError}</MessageContainer>;
 
   if (!playlists || playlists.length === 0)
     return <MessageContainer>No playlists found</MessageContainer>;
@@ -63,10 +64,11 @@ const PlaylistList: React.FC<Props> = ({ onEdit, onDelete }) => {
                     user: playlist.user._id || '',
                   }}
                   onSubmit={onEdit}
+                  triggerContent={<OutlineButton><Pencil size={18}/></OutlineButton>}
                 />
                 <DeleteDialog
                   dialogId={`delete-playlist-${playlist._id}`}
-                  triggerText="Delete"
+                  triggerContent={<OutlineDeleteButton><Trash2 size={16}/></OutlineDeleteButton>}
                   itemName="Playlist"
                   deleteStatus={{ deleted: mutuated, error: error, deleting: deleting }}
                   onDelete={() => onDelete(playlist._id)}

@@ -9,30 +9,31 @@ import { useAppDispatch, useAppSelector } from '../../app/store';
 import { useDialog } from '../../contexts/dialog.context';
 import { toast } from 'react-toastify';
 import { fetchArtists } from '../../features/artists/artist.slice';
-import { Plus } from 'lucide-react';
-import styled from 'styled-components';
-import { Dismissable } from '../../components/Layout';
+import { resetMutation } from '../../features/songs/song.slice';
+import { ButtonRow, DeleteButton } from '../../components/Button';
 
 interface Props {
   onSubmit: (song: SongPayload, id?: string) => void;
   editingSong?: Song | null;
+  triggerContent: React.ReactNode;
 }
 
-const AddSong: React.FC<Props> = ({ onSubmit, editingSong }) => {
+const AddSong: React.FC<Props> = ({ onSubmit, editingSong, triggerContent }) => {
 
+  const editMode = !!editingSong;
   const dispatch = useAppDispatch()
   const { closeDialog, openedDialogs } = useDialog()
   const { artists } = useAppSelector(state => state.artists)
   const dialogId = React.useMemo(() => `${editingSong ? "edit-song-" + editingSong._id : "add-song"}`, [editingSong]);
 
 
-  const { mutuated, creating, } = useAppSelector(state => state.songs)
+  const { mutuated, creating, updating, } = useAppSelector(state => state.songs)
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { isDirty, errors }
   } = useForm<SongFormData>({
     resolver: zodResolver(songSchema),
     defaultValues: {
@@ -72,17 +73,18 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong }) => {
   useEffect(() => {
     if (mutuated) {
       closeDialog(dialogId)
+      dispatch(resetMutation({
+        mutuated: false,
+      }))
     }
-  }
-    , [mutuated]);
+  }, [mutuated]);
 
 
   useEffect(() => {
     dispatch(fetchArtists())
-  }
-    , [dispatch])
+  }, [dispatch])
 
-  useEffect(() =>{
+  useEffect(() => {
     if (openedDialogs.includes(dialogId)) {
       reset({
         title: editingSong?.title ?? '',
@@ -94,14 +96,24 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong }) => {
       });
     }
   }, [openedDialogs])
+
+
+  const prepateButtonText = () => {
+    if (creating) {
+      return editMode ? 'Saving...' : 'Adding...';
+    }
+    return editMode ? 'Save Song' : 'Add Song';
+  };
   return (
     <Dialog
       dialogId={dialogId}
-      icon={<Plus size={20} />}
-      triggerText={<span> <Dismissable>{editingSong ? "Edit" : "Add"}</Dismissable> Song</span>}
+      triggerContent={triggerContent}
     >
-      <FormContainer onSubmit={handleSubmit(onDataSubmit)}>
-        <h2>{editingSong ? 'Edit Song' : 'Add New Song'}</h2>
+      <FormContainer onSubmit={e => {
+        e.preventDefault();
+        return handleSubmit(onDataSubmit)();
+      }}>
+        <h2>{editMode ? 'Edit Song' : 'Add New Song'}</h2>
 
         <Input
           id="title"
@@ -154,9 +166,26 @@ const AddSong: React.FC<Props> = ({ onSubmit, editingSong }) => {
         <ErrorMessage hasError={!!errors.audioUrl}>
           {errors.audioUrl?.message}
         </ErrorMessage>
-        <SubmitButton disabled={creating} type="submit">
-          {editingSong ? 'Update Song' : 'Add Song'}
-        </SubmitButton>
+        <ButtonRow>
+          {editMode && isDirty && <DeleteButton
+            onClick={() => {
+              reset({
+                title: editingSong?.title ?? '',
+                artist: editingSong?.artist ?? '',
+                album: editingSong?.album ?? '',
+                genre: editingSong?.genre ?? '',
+                realseDate: editingSong?.releaseDate ?? '',
+                audioUrl: editingSong?.audioUrl ?? '',
+              });
+            }}
+            disabled={creating || updating}
+          >
+            Discard changes
+          </DeleteButton>}
+          <SubmitButton disabled={creating || updating} type="submit">
+            {prepateButtonText()}
+          </SubmitButton>
+        </ButtonRow>
       </FormContainer>
     </Dialog>
   );

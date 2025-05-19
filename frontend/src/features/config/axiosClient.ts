@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
 import { getCSRFToken } from "./csrf";
 import GLOBAL_URLS from "./global_urls";
 import { toast } from "react-toastify";
@@ -40,25 +40,45 @@ const waitForOnline = (): Promise<void> =>
   });
 
 /**
- * Retry logic with refresh token
+ * Retry queue and refresh token logic
  */
 let isRefreshing = false;
 let failedQueue: Array<() => void> = [];
+
+/**
+ * Retry a request up to 3 times with online check
+ */
+const retryWithLimit = async (requestConfig: AxiosRequestConfig<any>, retries = 3) => {
+  let attempts = 0;
+  while (attempts < retries) {
+    try {
+      return await api(requestConfig);
+    } catch (err) {
+      if (!navigator.onLine) {
+        toast.warn("You are offline. Waiting for connection...");
+        await waitForOnline();
+        toast.success("Back online. Retrying...");
+      }
+      attempts++;
+      if (attempts >= retries) throw err;
+    }
+  }
+};
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Network error with no response
+    // Network error (no response)
     if (!error.response) {
       toast.error("Network error. Please check your internet connection.");
       await waitForOnline();
       toast.success("Back online. Retrying...");
-      return api(originalRequest);
+      return retryWithLimit(originalRequest);
     }
 
-    // Unauthorized - attempt token refresh
+    // Unauthorized (token expired)
     if (
       error.response.status === 401 &&
       !originalRequest._retry &&
@@ -75,9 +95,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem(Token.REFRESH_TOKEN);
-        if (!refreshToken) {
-          throw new Error("No refresh token");
-        }
+        if (!refreshToken) throw new Error("No refresh token");
 
         const response = await axios.post(`${baseURL}/Auth/RefreshToken`, {
           Token: localStorage.getItem(Token.ACCESS_TOKEN),
@@ -88,7 +106,6 @@ api.interceptors.response.use(
         localStorage.setItem(Token.ACCESS_TOKEN, token);
         localStorage.setItem(Token.REFRESH_TOKEN, newRefreshToken);
 
-        // Retry queued requests
         failedQueue.forEach((cb) => cb());
         failedQueue = [];
 
