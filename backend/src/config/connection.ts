@@ -1,8 +1,7 @@
 import { Express } from "express";
 import mongoose from "mongoose";
-import listEndpoints from 'express-list-endpoints'
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/test_songs';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://sutual:yourRealPassword@cluster0.nwsruxy.mongodb.net/musicapp?retryWrites=true&w=majority&appName=Cluster0';
 const PORT = process.env.PORT || 5000
 
 // DB CONECTION
@@ -14,5 +13,6 @@ const DBConnection = (app: Express) => {
     })
     .catch(err => console.error(err));
 }
+
 
 export default DBConnection;

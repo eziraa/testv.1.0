@@ -19,7 +19,6 @@ export class FileUploader {
   }
 
   public getUploader(): Multer {
-    console.log("Upload Folder",this.uploadFolder)
     return multer({
       storage: multer.diskStorage({
         destination: (_req, _file, cb) => cb(null, this.uploadFolder),
