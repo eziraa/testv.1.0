@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon",
     "test": "jest",
-    "seed": "ts-node src/seeder.ts"
+    "seed": "ts-node src/seeder.ts",
+    "start": "node dist/index.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
