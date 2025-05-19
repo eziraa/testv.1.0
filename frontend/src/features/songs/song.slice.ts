@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {  type SongPayload,  } from "./song.types";
 import type { Artist } from "../artists/artist.types";
 
-interface Song {
+export interface Song {
   _id: string;
   title: string;
   artist: Artist;

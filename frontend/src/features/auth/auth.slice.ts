@@ -1,13 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import type { LoginPayload, SignupPayload } from "./auth.types";
+import type { Song } from "../songs/song.slice";
 
 interface User {
   name: string;
   _id: string;
   email: string;
   username: string;
-  favorites: string[];
+  favorites: Song[];
   createdAt: string;
   updatedAt: string;
 }

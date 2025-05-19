@@ -2,14 +2,15 @@ import React, { useEffect } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
-import type { Song, SongPayload } from '../../features/songs/song.types';
+import type { SongPayload } from '../../features/songs/song.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { favoriteSong } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import DeleteDialog from '../../components/DeleteDialog';
-import { Dot, Heart, HeartIcon, Pencil, Trash2 } from 'lucide-react';
+import { Dot, Pencil, Trash2 } from 'lucide-react';
 import AddSong from '../songs/AddSong';
 import { getMe } from '../../features/auth/auth.slice';
+import { FavoriteIcon } from '../songs/SongList';
 
 interface Props {
   onEdit: (song: SongPayload, id?: string) => void;
@@ -30,7 +31,7 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
   if (fetching) return <LoadingPage />;
   if (fetchError) return <ErrorMessage>Error: {fetchError}</ErrorMessage>;
   if (!user?.favorites || user.favorites.length === 0) return <EmptyMessage>No songs found.</EmptyMessage>;
-  const songs = user.favorites as unknown as Song[]
+  const songs = user.favorites;
   return (
     <Wrapper>
       <ListContainer>
@@ -45,9 +46,10 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                 )}
               </ArtworkPlaceholder>
               <SongDetails>
-                <SongTitle>{song.title}</SongTitle><Dot style={{
-                  color: theme.accent
-                }} />
+                <SongTitle>{song.title}</SongTitle>
+                <SongSubInfo>{song.artist?.name} 
+                  <Dot style={{color: theme.accent}} /> {song.album}
+                </SongSubInfo>
                 <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
             </TopSection>
@@ -62,11 +64,8 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                     }}
                   >
                     {
-                      user.favorites.includes(song._id)
-                        ?
-                        <HeartIcon size={20} />
-                        :
-                        <Heart size={20} />
+                      <FavoriteIcon size={16} $favorited={user.favorites.some(favoriteSong => favoriteSong._id === song._id)} />
+
                     }
                   </OutlineDeleteButton>
                 )
@@ -74,7 +73,7 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
               <AddSong
                 editingSong={{
                   ...song,
-                  artist: song.artist,
+                  artist: song.artist._id,
                 }}
                 onSubmit={onEdit}
                 triggerContent={
