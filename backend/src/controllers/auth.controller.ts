@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import User from "../models/User";
+import User, { verifyRefreshToken } from "../models/User";
 
 import { SignUpSchema } from "../validators/auth.validator";
 
@@ -126,14 +126,29 @@ class AuthController {
         return;
       }
 
-      const user = await User.findOne({ "authTokens.refreshToken": refreshToken });
+      // Extract user from refresh token
+      const decoded = verifyRefreshToken(refreshToken) as { _id: string };
+      console.log(decoded)
+      if (!decoded) {
+        res.status(401).json({ message: "Invalid refresh token" });
+        return;
+      }
+      const userId = decoded._id;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized please login" });
+        return;
+      }
+      // Find user by ID
+      const user = await User.findById(userId);
+    
+
       if (!user) {
         res.status(401).json({ message: "Invalid refresh token" });
         return;
       }
 
       const newAuthTokens = user.generateAuthToken();
-      res.status(200).json({ message: "Token refreshed", authTokens: newAuthTokens });
+      res.status(200).json({ message: "Token refreshed",user, authTokens: newAuthTokens });
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error", error });
     }
