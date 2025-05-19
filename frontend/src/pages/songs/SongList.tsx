@@ -8,7 +8,7 @@ import { favoriteSong, fetchSongs } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import AddSong from './AddSong';
 import DeleteDialog from '../../components/DeleteDialog';
-import { Dot, Heart, HeartIcon, Pencil, Trash2 } from 'lucide-react';
+import { Dot, Heart,  Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (song: SongPayload, id?: string) => void;
@@ -19,7 +19,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const theme = useTheme()
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user)
-  const { songs, fetchError,mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
+  const { songs, fetchError, mutuated, deleting, fetching, error } = useAppSelector((state) => state.songs);
 
   useEffect(() => {
     dispatch(fetchSongs());
@@ -61,11 +61,7 @@ const SongList: React.FC<Props> = ({ onEdit, onDelete }) => {
                     }}
                   >
                     {
-                      user.favorites.includes(song._id)
-                        ?
-                        <HeartIcon size={20} />
-                        :
-                        <Heart size={20} />
+                      <FavoriteIcon size={16} $favorited={user.favorites.includes(song._id)} />
                     }
                   </OutlineDeleteButton>
                 )
@@ -219,9 +215,26 @@ const ErrorMessage = styled.div`
   margin-top: 2rem;
 `;
 
-const EmptyMessage = styled.div`
+export const EmptyMessage = styled.div`
   color: ${({ theme }) => theme.textSecondary};
   text-align: center;
   font-size: 1.1rem;
   margin-top: 2rem;
+`;
+
+interface FavoriteProps {
+  $favorited: boolean;
+}
+
+export const FavoriteIcon = styled(Heart) <FavoriteProps>`
+  cursor: pointer;
+  transition: all 0.2s ease;
+  stroke: ${({ $favorited, theme }) => ($favorited ? theme.cardBackground : '#e23737')};
+  fill: ${({ $favorited, theme }) => ($favorited ? '#e23737' : theme.cardBackground)};
+  padding: 0;
+  &:hover {
+    transform: scale(1.04);
+    stroke: ${({ $favorited, theme }) => (!$favorited ? theme.cardBackground : '#e23737')};
+    fill: ${({ $favorited, theme }) => (!$favorited ? '#e23737' : theme.cardBackground)};
+  }
 `;
