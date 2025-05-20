@@ -21,7 +21,7 @@ interface Props {
 const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist }) => {
 
   const editMode = !!editingArtist;
-  const { closeDialog } = useDialog()
+  const { closeDialog, openedDialogs } = useDialog()
   const [profilePricture, setProfilePicture] = useState<File | null>(null)
   const dialogId = React.useMemo(() => `${editingArtist ? "edit-artist-" + editingArtist._id : "add-artist"}`, [editingArtist]);
 
@@ -75,7 +75,16 @@ const AddArtist: React.FC<Props> = ({ onSubmit, triggerContent, editingArtist })
     }
   }, [editingArtist, reset]);
 
-
+useEffect(() => {
+  if (openedDialogs.includes(dialogId)) {
+    reset({
+      name: editingArtist?.name,
+      bio: editingArtist?.bio,
+      profilePicture: editingArtist?.profilePicture
+    });
+    setProfilePicture(null)
+  }
+}, [openedDialogs]);
 
   const prepareBtnText = () => {
     if (creating) {

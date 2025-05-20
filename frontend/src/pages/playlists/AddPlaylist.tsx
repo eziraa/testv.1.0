@@ -85,6 +85,7 @@ const AddPlaylist: React.FC<Props> = ({ onSubmit, editingPlaylist, triggerConten
       user: editingPlaylist?.user || user?._id || 'userid',
       songs: editingPlaylist?.songs,
     });
+    setCoverImage(null)
   }, [editingPlaylist, reset, openedDialogs]);
 
   const prepareBtnText = () => {
