@@ -2,7 +2,9 @@ import { Settings, User } from "lucide-react"
 import React from "react"
 import styled from "styled-components"
 import { Avatar } from "./Layout"
-import { useAppSelector } from "../app/store"
+import { useAppDispatch, useAppSelector } from "../app/store"
+import { Button } from "./Button"
+import { logoutSuccess } from "../features/auth/auth.slice"
 
 const Dropdown = styled.div`
   width: 200px;
@@ -85,20 +87,39 @@ const LogoutButton = styled.button`
 `
 
 const ProfileDropdown: React.FC = () => {
+  const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user)
   return (
     <Dropdown className="profile-dropdown">
       <UserSection>
         <Avatar src="/avatar.png" fallbackIcon={<User size={18} />} />
-        <UserDetails>
+        {user && <UserDetails>
           <UserName> {user?.username || "No user"} </UserName>
           <UserRole>{user?.email || "test@test.com"}</UserRole>
-        </UserDetails>
+        </UserDetails>}
       </UserSection>
+      {
+        user && <>
 
-      <MenuItem><IconWrapper><User size={16} /></IconWrapper>Profile</MenuItem>
-      <MenuItem><IconWrapper><Settings size={16} /></IconWrapper>Settings</MenuItem>
-      <LogoutButton>Log Out</LogoutButton>
+          <MenuItem><IconWrapper><User size={16} /></IconWrapper>Profile</MenuItem>
+          <MenuItem><IconWrapper><Settings size={16} /></IconWrapper>Settings</MenuItem></>
+      }
+      {user ?
+        <LogoutButton
+          onClick={() => {
+            dispatch(logoutSuccess())
+            window.location.href = '/login'
+          }}>
+          Log Out
+        </LogoutButton>
+        :
+        <Button
+          onClick={() => {
+            dispatch(logoutSuccess())
+            window.location.href = '/login'
+          }}>
+          Log in
+        </Button>}
     </Dropdown>
   )
 }

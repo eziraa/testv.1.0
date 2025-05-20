@@ -53,7 +53,6 @@ const authSlice = createSlice({
     signup: (state, _: PayloadAction<SignupPayload>) => {
       state.signingUp = true;
       state.error = null;
-      state.toastId = toast.loading("Signing up...");
       state.mutuated = false;
     },
     signupSuccess: (state, action: PayloadAction<AuthState>) => {
@@ -75,7 +74,6 @@ const authSlice = createSlice({
     login: (state, _: PayloadAction<LoginPayload>) => {
       state.logingIn = true;
       state.error = null;
-      state.toastId = toast.loading("Signing in...");
       state.mutuated = false;
     },
     loginSuccess: (state, action: PayloadAction<AuthState>) => {
@@ -109,7 +107,6 @@ const authSlice = createSlice({
     logout: (state) => {
       state.signingOut = true;
       state.error = null;
-      state.toastId = toast.loading("Signing out...");
       state.mutuated = false;
     },
     logoutSuccess: (state) => {
@@ -121,6 +118,8 @@ const authSlice = createSlice({
       }
       state.error = null;
       state.mutuated = true;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       toast.success("Signed out successfully", {toastId: state.toastId});
     },
     logoutFailure: (state, action: PayloadAction<string>) => {

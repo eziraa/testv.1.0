@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Menu, X, Music, User, Music2, HeartIcon, HomeIcon } from 'lucide-react';
 import { CloseButton } from './Button';
+import { logoutSuccess } from '../features/auth/auth.slice';
+import { useAppDispatch } from '../app/store';
 
 interface  SideBarItem{
   name: string;
@@ -18,9 +20,9 @@ const sideBarItems: SideBarItem[] = [
   { name: 'Playlists', icon: <Music2 size={18} />, url: '/playlists' },
   {name: 'Favorites', icon: <HeartIcon size={18} />, url: '/favorites'},
   { name: 'Settings', icon: <User size={18} />, url: '/' },
-  { name: 'Logout', icon: <User size={18} />, url: '/' },
 ];
 const SideBar: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = useLocation().pathname;
 
@@ -57,6 +59,17 @@ const SideBar: React.FC = () => {
                 {item.name}
               </StyledLink>
             ))}
+            <StyledLink
+                to={'/login'}
+                onClick={()=>{
+                  closeMenu();
+                  dispatch(logoutSuccess());
+                  window.location.href = '/login';
+                }}
+              >
+                <User size={18} />
+                Logout
+              </StyledLink>
           </NavLinks>
         </Sidebar>
       </SidebarContainer>
