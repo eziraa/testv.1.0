@@ -8,11 +8,9 @@ import { Button } from '../../../components/Button';
 import { Input } from '../../../components/Form';
 import { useAppDispatch, useAppSelector } from '../../../app/store';
 import { signup, signupFailure } from '../../../features/auth/auth.slice';
-import { useNavigate } from 'react-router-dom';
 
 const SignUpPage: React.FC = () => {
 
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { signingUp, mutuated } = useAppSelector(state => state.auth);
@@ -39,7 +37,7 @@ const SignUpPage: React.FC = () => {
 
   React.useEffect(() => {
     if (mutuated) {
-      navigate('/login');
+      window.location.href = '/login'
     }
   }, [mutuated]);
 

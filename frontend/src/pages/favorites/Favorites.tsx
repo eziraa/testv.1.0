@@ -2,18 +2,17 @@ import React, { useEffect } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Card } from '../../components/Card';
 import { ButtonRow, OutlineButton, OutlineDeleteButton } from '../../components/Button';
-import type { SongPayload } from '../../features/songs/song.types';
 import { useAppDispatch, useAppSelector } from '../../app/store';
-import { favoriteSong } from '../../features/songs/song.slice';
+import { favoriteSong, fetchSongSuccess } from '../../features/songs/song.slice';
 import LoadingPage from '../../components/LoadingPage';
 import DeleteDialog from '../../components/DeleteDialog';
-import { Dot, Pencil, Trash2 } from 'lucide-react';
+import { Dot, Pencil, Play, Trash2 } from 'lucide-react';
 import AddSong from '../songs/AddSong';
 import { getMe } from '../../features/auth/auth.slice';
 import { FavoriteIcon } from '../songs/SongList';
 
 interface Props {
-  onEdit: (song: SongPayload, id?: string) => void;
+  onEdit: (song: FormData, id?: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -21,7 +20,7 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const theme = useTheme()
   const dispatch = useAppDispatch();
   const { fetchError, user, fetching } = useAppSelector(state => state.auth)
-  const { error, deleting, mutuated } = useAppSelector(state => state.songs)
+  const { error, song: currentSong, deleting, mutuated } = useAppSelector(state => state.songs)
 
 
   useEffect(() => {
@@ -47,15 +46,25 @@ const FavoriteSongList: React.FC<Props> = ({ onEdit, onDelete }) => {
               </ArtworkPlaceholder>
               <SongDetails>
                 <SongTitle>{song.title}</SongTitle>
-                <SongSubInfo>{song.artist?.name} 
-                  <Dot style={{color: theme.accent}} /> {song.album}
+                <SongSubInfo>{song.artist?.name}
+                  <Dot style={{ color: theme.accent }} /> {song.album}
                 </SongSubInfo>
                 <MutedElement>{song.genre || <i>No genre</i>}</MutedElement>
               </SongDetails>
             </TopSection>
 
             <ActionRow>
-
+              {
+                currentSong?._id !== song._id && (
+                  <OutlineButton
+                    onClick={() => {
+                      dispatch(fetchSongSuccess(song))
+                    }}
+                  >
+                    {currentSong?._id !== song._id && <Play size={16} />}
+                  </OutlineButton>
+                )
+              }
               {
                 !!user && (
                   <OutlineDeleteButton
