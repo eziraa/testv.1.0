@@ -21,7 +21,7 @@ const MiniPlayer = () => {
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
     };
-  }, []);
+  }, [song]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -39,7 +39,6 @@ const MiniPlayer = () => {
   useEffect(()=>{
     audioRef.current?.pause()
     setIsPlaying(false);
-    setProgress(0)
   }, [song])
   if(!song )return ;
   
@@ -76,6 +75,7 @@ const PlayerContainer = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
+  position: relative;
 `;
 
 const Info = styled.div`
@@ -118,15 +118,15 @@ const Button = styled.button`
 
 const ProgressBar = styled.div`
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 0.5rem;
+  left: 1rem;
   height: 4px;
-  width: 100%;
+  width: 90%;
   background: ${({ theme }) => theme.border};
 `;
 
 const Progress = styled.div`
   height: 100%;
-  background: ${({ theme }) => theme.primary};
+  background: ${({ theme }) => theme.accent};
   transition: width 0.2s ease;
 `;
