@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=mongodb+srv://user2000:Sutual@cluster0.tyqau.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - MONGO_URI=${MONGO_URI}
     depends_on:
       - mongo
 
