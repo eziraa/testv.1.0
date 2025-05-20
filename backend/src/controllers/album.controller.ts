@@ -24,10 +24,10 @@ class AlbumController {
       }
 
       // Parse songs from JSON string to array
-      if (!req.body.songs) {
+      if (!req.body.songs || req.body.songs === 'undefined') {
         req.body.songs = [];
       } else {
-        req.body.songs = JSON.parse(req.body.songs);
+        req.body.songs = JSON.parse(req.body.songs || "[]");
       }
       const inputData = {
         ...req.body,
@@ -45,6 +45,7 @@ class AlbumController {
           errors: (err as any).errors,
         });
       }
+      console.log(err)
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
